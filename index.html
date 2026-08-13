@@ -2,875 +2,2024 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI3 魔法午餐分類帽</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>午餐大象｜重慶北路今天吃什麼？</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#070707;color:#f4e7bd;font-family:"Microsoft JhengHei",Arial,sans-serif}
-#scene{position:fixed;inset:0}
-canvas{display:block}
+*{box-sizing:border-box;margin:0;padding:0}
 
-.vignette{
-  position:fixed;inset:0;pointer-events:none;
-  background:
-    radial-gradient(circle at 50% 45%,transparent 20%,rgba(0,0,0,.18) 55%,rgba(0,0,0,.86) 100%);
+:root{
+  --cream:#fff7e8;
+  --paper:#fffdf8;
+  --red:#d95f52;
+  --deep-red:#b8423b;
+  --gold:#e7ae46;
+  --blue:#5d8796;
+  --ink:#49362e;
+  --muted:#8b756a;
+  --line:rgba(73,54,46,.13);
 }
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 50% 20%,#fffdf6 0%,#fff4dd 45%,#f3dfbd 100%);
+}
+
+button{font:inherit;cursor:pointer}
+
+/* ================= HEADER ================= */
 
 header{
-  position:fixed;top:25px;left:50%;transform:translateX(-50%);
-  text-align:center;z-index:10;pointer-events:none;
-}
-header small{letter-spacing:5px;color:#b89c62;font-size:11px}
-header h1{
-  margin:7px 0 0;font-family:Georgia,serif;font-size:25px;
-  font-weight:normal;letter-spacing:2px;color:#f4dfad;
-  text-shadow:0 0 20px rgba(213,171,91,.35);
+  position:absolute;
+  left:0;right:0;top:0;
+  height:82px;
+  z-index:30;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 34px;
+
+  background:rgba(255,253,248,.86);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
 }
 
-.panel{
-  position:fixed;left:28px;top:50%;transform:translateY(-50%);
-  width:255px;padding:22px;z-index:10;
-  border:1px solid rgba(216,180,106,.25);
-  background:linear-gradient(145deg,rgba(26,20,13,.87),rgba(8,8,8,.75));
-  backdrop-filter:blur(14px);
-  border-radius:7px;
-  box-shadow:0 18px 50px rgba(0,0,0,.35);
+.brand{
+  display:flex;
+  align-items:center;
+  gap:13px;
 }
-.panel-title{
-  font-family:Georgia,serif;color:#d7b66f;font-size:16px;
-  padding-bottom:12px;border-bottom:1px solid rgba(216,180,106,.18);
-  margin-bottom:18px;
-}
-.group{margin-bottom:18px}
-.group-title{font-size:12px;color:#9d895e;margin-bottom:9px;letter-spacing:1px}
-select{
-  width:100%;background:#15110c;color:#ead8ad;border:1px solid #55462d;
-  border-radius:4px;padding:9px;
-}
-.check{display:block;font-size:13px;margin:8px 0;color:#d8c9a8;cursor:pointer}
-.check input{accent-color:#b38b43;margin-right:7px}
 
-.count{
-  font-size:12px;color:#968461;text-align:center;margin:13px 0;
-}
-.count b{color:#e3c77e;font-size:18px}
+.logo{
+  width:47px;
+  height:47px;
+  border-radius:50%;
 
-.magic-button{
-  width:100%;padding:12px;border:1px solid #b89550;
-  color:#f6e6bd;cursor:pointer;border-radius:4px;
-  font-family:Georgia,serif;letter-spacing:1px;
-  background:linear-gradient(#745326,#3c2b15);
-  box-shadow:inset 0 0 20px rgba(255,207,110,.08),0 0 20px rgba(184,145,72,.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:white;
+  background:var(--red);
+
+  font-size:22px;
+
+  box-shadow:0 8px 20px rgba(185,66,59,.2);
+}
+
+.brand h1{
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:19px;
+}
+
+.brand small{
+  display:block;
+  margin-top:3px;
+  color:#a08372;
+  font-size:9px;
+  letter-spacing:.2em;
+}
+
+.location{
+  font-size:11px;
+  color:#866e61;
+
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.location-dot{
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#5d9270;
+}
+
+/* ================= LAYOUT ================= */
+
+.app{
+  position:absolute;
+  top:82px;
+  bottom:0;
+  left:0;
+  right:0;
+
+  display:grid;
+  grid-template-columns:300px 1fr;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  z-index:20;
+  padding:27px 23px;
+  overflow-y:auto;
+
+  background:rgba(255,253,248,.78);
+  backdrop-filter:blur(18px);
+
+  border-right:1px solid var(--line);
+}
+
+.kicker{
+  color:var(--deep-red);
+  font-size:9px;
+  letter-spacing:.22em;
+}
+
+.sidebar h2{
+  margin-top:8px;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:25px;
+}
+
+.intro{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.7;
+}
+
+.filter{
+  margin-top:24px;
+}
+
+.label{
+  margin-bottom:11px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.chip{
+  padding:8px 11px;
+
+  border:1px solid var(--line);
+  border-radius:100px;
+
+  background:white;
+  color:#765e51;
+
+  font-size:10px;
+
+  transition:.2s;
+}
+
+.chip.active{
+  color:white;
+  background:var(--red);
+  border-color:var(--red);
+}
+
+.countbox{
+  margin-top:25px;
+  padding:16px;
+
+  border-radius:17px;
+
+  background:#f9e7c6;
+  border:1px solid rgba(200,143,49,.16);
+}
+
+.counttop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.counttitle{
+  color:#876f5f;
+  font-size:10px;
+}
+
+#count{
+  color:var(--deep-red);
+  font-family:Georgia,serif;
+  font-size:28px;
+}
+
+.countdesc{
+  margin-top:3px;
+  color:#9a7e6c;
+  font-size:9px;
+}
+
+.pick{
+  width:100%;
+
+  margin-top:13px;
+  padding:15px;
+
+  border:0;
+  border-radius:15px;
+
+  color:white;
+
+  background:
+    linear-gradient(135deg,#dc6758,#bd443d);
+
+  font-weight:700;
+  font-size:12px;
+
+  box-shadow:0 12px 28px rgba(190,67,59,.22);
+
   transition:.25s;
 }
-.magic-button:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(194,153,77,.28)}
-.magic-button:disabled{opacity:.35;cursor:not-allowed;transform:none}
 
-.dialogue{
-  position:fixed;bottom:34px;left:50%;transform:translateX(-50%);
-  width:min(590px,90%);text-align:center;z-index:9;pointer-events:none;
+.pick:hover{
+  transform:translateY(-2px);
 }
-#speech{
-  font-family:Georgia,"Microsoft JhengHei",serif;
-  color:#e8d6ad;font-size:17px;letter-spacing:.5px;
-  text-shadow:0 2px 10px #000;
-  min-height:26px;
-}
-.hint{font-size:10px;color:#786d58;margin-top:8px;letter-spacing:2px}
 
-.result{
-  display:none;position:fixed;inset:0;z-index:30;
-  background:rgba(3,3,3,.72);backdrop-filter:blur(7px);
-  align-items:center;justify-content:center;
+.pick:disabled{
+  opacity:.35;
+  cursor:not-allowed;
 }
-.result.show{display:flex}
-.result-card{
-  width:min(500px,90%);padding:38px;text-align:center;
-  border:1px solid rgba(218,180,101,.55);
-  border-radius:8px;
+
+/* ================= STAGE ================= */
+
+.stage{
+  position:relative;
+  overflow:hidden;
+}
+
+#three{
+  position:absolute;
+  inset:0;
+}
+
+/* Circus stripes */
+
+.circus-top{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+
+  width:560px;
+  height:145px;
+
+  opacity:.13;
+
   background:
-   radial-gradient(circle at 50% 0,rgba(150,105,41,.18),transparent 50%),
-   #100d09;
-  box-shadow:0 0 90px rgba(180,129,50,.18);
-}
-.result-label{font-size:10px;letter-spacing:5px;color:#9d8150}
-.result-card h2{
-  font-family:Georgia,"Microsoft JhengHei",serif;
-  color:#f3d992;font-size:32px;font-weight:normal;margin:16px 0 8px;
-}
-.result-meta{color:#b9a984;font-size:13px}
-.tags{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:20px}
-.tag{
-  padding:5px 10px;border:1px solid rgba(190,156,90,.25);
-  border-radius:20px;color:#c9b68e;font-size:11px;
-}
-.actions{display:flex;gap:8px;justify-content:center;margin-top:24px}
-.actions button{
-  border:1px solid #6e5830;background:#19130c;color:#d9c28e;
-  padding:10px 17px;border-radius:4px;cursor:pointer;
-}
-.actions .primary{background:#725326;color:#fff0c7;border-color:#a78042}
+    repeating-linear-gradient(
+      110deg,
+      var(--red) 0 42px,
+      transparent 42px 84px
+    );
 
-@media(max-width:760px){
-  .panel{left:12px;right:12px;top:auto;bottom:12px;transform:none;width:auto;padding:13px}
-  .panel-title,.food-group{display:none}
-  .group{display:inline-block;width:48%;margin-bottom:10px}
-  header{top:15px}
-  .dialogue{bottom:190px}
+  clip-path:polygon(0 0,100% 0,72% 100%,28% 100%);
 }
+
+.stage-title{
+  position:absolute;
+  top:27px;
+  left:50%;
+  transform:translateX(-50%);
+
+  z-index:5;
+
+  text-align:center;
+  pointer-events:none;
+}
+
+.stage-title small{
+  color:#b06e43;
+  font-size:9px;
+  letter-spacing:.25em;
+}
+
+.stage-title h2{
+  margin-top:7px;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:28px;
+  font-weight:500;
+}
+
+.stage-title p{
+  margin-top:5px;
+  color:#92786a;
+  font-size:10px;
+}
+
+/* restaurant labels */
+
+.restaurant-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:7;
+}
+
+.restaurant{
+  position:absolute;
+
+  width:145px;
+  min-height:54px;
+
+  padding:9px 12px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+
+  text-align:center;
+
+  border-radius:13px;
+
+  background:rgba(255,253,248,.88);
+  border:1px solid rgba(139,91,62,.14);
+
+  box-shadow:0 9px 24px rgba(86,57,41,.09);
+
+  backdrop-filter:blur(8px);
+
+  transition:.35s;
+}
+
+.restaurant-name{
+  font-size:10px;
+  font-weight:700;
+}
+
+.restaurant-type{
+  margin-top:3px;
+  color:#a18676;
+  font-size:8px;
+}
+
+.restaurant.selected{
+  color:white;
+  background:var(--red);
+  border-color:var(--red);
+
+  transform:scale(1.12);
+
+  box-shadow:0 13px 35px rgba(191,67,58,.3);
+}
+
+.restaurant.selected .restaurant-type{
+  color:#ffe5d8;
+}
+
+/* ground */
+
+.ring{
+  position:absolute;
+
+  left:50%;
+  bottom:-100px;
+
+  width:660px;
+  height:260px;
+
+  transform:translateX(-50%);
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      #f3cf8e 0%,
+      #e4b96d 45%,
+      #cc9850 100%
+    );
+
+  opacity:.4;
+
+  box-shadow:0 -15px 60px rgba(173,116,50,.13);
+}
+
+/* message */
+
+.message{
+  position:absolute;
+
+  left:50%;
+  bottom:30px;
+
+  z-index:10;
+
+  transform:translateX(-50%);
+
+  padding:10px 18px;
+
+  border-radius:100px;
+
+  background:rgba(255,253,248,.88);
+  border:1px solid var(--line);
+
+  color:#81685a;
+
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:11px;
+
+  box-shadow:0 8px 25px rgba(86,57,41,.08);
+}
+
+/* ================= RESULT ================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(72,49,38,.25);
+  backdrop-filter:blur(8px);
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:.3s;
+}
+
+.modal.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.card{
+  width:min(430px,100%);
+  padding:33px;
+
+  text-align:center;
+
+  border-radius:27px;
+
+  background:#fffdf8;
+
+  border:1px solid rgba(188,128,55,.17);
+
+  box-shadow:0 35px 100px rgba(70,45,32,.24);
+
+  transform:translateY(18px) scale(.97);
+  transition:.3s;
+}
+
+.modal.show .card{
+  transform:none;
+}
+
+.icon{
+  width:65px;height:65px;
+
+  margin:auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  background:#f8dfb0;
+
+  font-size:31px;
+}
+
+.result-kicker{
+  margin-top:17px;
+  color:#bc7547;
+  font-size:9px;
+  letter-spacing:.23em;
+}
+
+#resultName{
+  margin-top:8px;
+
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:29px;
+}
+
+#resultInfo{
+  margin-top:7px;
+  color:#8b7366;
+  font-size:11px;
+}
+
+.tags{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px;
+
+  margin-top:15px;
+}
+
+.tags span{
+  padding:6px 9px;
+
+  border-radius:100px;
+
+  background:#f6e4c3;
+
+  color:#785a3e;
+
+  font-size:9px;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+
+  margin-top:24px;
+}
+
+.actions a,
+.actions button{
+  padding:12px;
+
+  border-radius:12px;
+
+  font-size:10px;
+  text-decoration:none;
+}
+
+.map{
+  grid-column:1/-1;
+
+  color:white;
+  background:var(--red);
+}
+
+.secondary{
+  color:#6c5549;
+  background:white;
+  border:1px solid var(--line);
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:800px){
+
+  header{
+    height:70px;
+    padding:0 16px;
+  }
+
+  .location,
+  .brand small{
+    display:none;
+  }
+
+  .app{
+    top:70px;
+    display:block;
+  }
+
+  .stage{
+    width:100%;
+    height:100%;
+  }
+
+  .sidebar{
+    position:absolute;
+
+    left:10px;
+    right:10px;
+    bottom:10px;
+
+    z-index:30;
+
+    max-height:40vh;
+
+    padding:16px;
+
+    border:1px solid var(--line);
+    border-radius:20px;
+
+    box-shadow:0 20px 50px rgba(80,50,30,.15);
+  }
+
+  .sidebar h2{
+    font-size:20px;
+  }
+
+  .intro{
+    display:none;
+  }
+
+  .filter{
+    margin-top:13px;
+  }
+
+  .stage-title h2{
+    font-size:21px;
+  }
+
+  .stage-title p{
+    display:none;
+  }
+
+  .restaurant{
+    width:110px;
+  }
+
+  .message{
+    bottom:43%;
+  }
+
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="scene"></div>
-<div class="vignette"></div>
-
 <header>
-  <small>AI3 · NANGANG</small>
-  <h1>THE ENCHANTED LUNCH HAT</h1>
+
+<div class="brand">
+
+  <div class="logo">🐘</div>
+
+  <div>
+    <h1>午餐大象</h1>
+    <small>THE GREAT LUNCH CIRCUS</small>
+  </div>
+
+</div>
+
+<div class="location">
+  <span class="location-dot"></span>
+  重慶北路一段 1-1 號周邊
+</div>
+
 </header>
 
-<aside class="panel">
-  <div class="panel-title">午餐魔法條件</div>
 
-  <div class="group">
-    <div class="group-title">願意踏出多遠？</div>
-    <select id="distance">
-      <option value="500">500 公尺內</option>
-      <option value="1000">1 公里內</option>
-      <option value="2000" selected>2 公里內</option>
-    </select>
+<div class="app">
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+<div class="kicker">
+TODAY'S LUNCH SHOW
+</div>
+
+<h2>
+今天到底吃什麼？
+</h2>
+
+<p class="intro">
+選一下你今天的心情，然後不要再討論了。
+讓大象的鼻子替大家做決定。
+</p>
+
+
+<div class="filter">
+
+  <div class="label">
+    今天想吃
   </div>
 
-  <div class="group">
-    <div class="group-title">環境咒語</div>
-    <label class="check">
-      <input id="ac" type="checkbox" checked>
-      必須有冷氣
-    </label>
+  <div class="chips">
+
+    <button class="chip active" data-type="台式">
+      🍚 台式
+    </button>
+
+    <button class="chip active" data-type="日式">
+      🍣 日式
+    </button>
+
+    <button class="chip active" data-type="咖哩">
+      🍛 咖哩
+    </button>
+
+    <button class="chip active" data-type="麵食">
+      🍜 麵食
+    </button>
+
+    <button class="chip active" data-type="餐盒">
+      🍱 餐盒
+    </button>
+
   </div>
 
-  <div class="group food-group">
-    <div class="group-title">今日胃口</div>
-    <div id="foods"></div>
+</div>
+
+
+<div class="filter">
+
+  <div class="label">
+    預算
   </div>
 
-  <div class="count">
-    魔法帽感應到 <b id="count">0</b> 間餐廳
+  <div class="chips">
+
+    <button class="chip active" data-price="1">
+      $ 平價
+    </button>
+
+    <button class="chip active" data-price="2">
+      $$ 中等
+    </button>
+
   </div>
 
-  <button id="choose" class="magic-button">
-    讓魔法帽決定
-  </button>
+</div>
+
+
+<div class="countbox">
+
+  <div class="counttop">
+
+    <span class="counttitle">
+      今天參加表演的餐廳
+    </span>
+
+    <span id="count">
+      0
+    </span>
+
+  </div>
+
+  <div class="countdesc">
+    間餐廳等待大象點名
+  </div>
+
+</div>
+
+
+<button id="pickButton" class="pick">
+🐘 大象幫我選！
+</button>
+
 </aside>
 
-<div class="dialogue">
-  <div id="speech">「Hmm... 今天的你，想吃些什麼呢？」</div>
-  <div class="hint">DRAG TO LOOK AROUND · SCROLL TO MOVE</div>
+
+<!-- ================= 3D ================= -->
+
+<main class="stage">
+
+<div class="circus-top"></div>
+
+<div class="stage-title">
+
+  <small>
+    THE GREAT LUNCH CIRCUS
+  </small>
+
+  <h2>
+    看象鼻今天指向哪一間。
+  </h2>
+
+  <p>
+    點擊開始後，象鼻會自己替你的午休負責。
+  </p>
+
 </div>
 
-<div id="result" class="result">
-  <div class="result-card">
-    <div class="result-label">THE HAT HAS DECIDED</div>
-    <h2 id="resultName"></h2>
-    <div id="resultMeta" class="result-meta"></div>
-    <div id="tags" class="tags"></div>
+<div id="three"></div>
 
-    <div class="actions">
-      <button id="again">不服，再問一次</button>
-      <button id="back" class="primary">接受命運</button>
-    </div>
+<div class="ring"></div>
+
+<div
+  id="restaurantLayer"
+  class="restaurant-layer">
+</div>
+
+<div
+  id="message"
+  class="message">
+  🐘 大象正在等你下令……
+</div>
+
+</main>
+
+</div>
+
+
+<!-- ================= RESULT ================= -->
+
+<div id="modal" class="modal">
+
+<div class="card">
+
+  <div class="icon">
+    🐘
   </div>
+
+  <div class="result-kicker">
+    THE ELEPHANT HAS DECIDED
+  </div>
+
+  <div id="resultName"></div>
+
+  <div id="resultInfo"></div>
+
+  <div id="resultTags" class="tags"></div>
+
+  <div class="actions">
+
+    <a
+      id="mapLink"
+      class="map"
+      target="_blank"
+      rel="noopener">
+      Google 地圖看看 →
+    </a>
+
+    <button
+      id="again"
+      class="secondary">
+      ↻ 鼻子再甩一次
+    </button>
+
+    <button
+      id="close"
+      class="secondary">
+      我想重新選
+    </button>
+
+  </div>
+
 </div>
+
+</div>
+
 
 <script>
-/* ======================================================
-   RESTAURANT DATA
-   之後主要修改這裡即可
-====================================================== */
 
-const restaurants=[
- {name:"樂法 Le Phu",distance:300,ac:true,types:["漢堡/美式","其他/小吃"]},
- {name:"園區牛肉麵",distance:420,ac:true,types:["麵"]},
- {name:"南港漢堡研究所",distance:480,ac:true,types:["漢堡/美式"]},
- {name:"咖哩研究社",distance:560,ac:true,types:["飯"]},
- {name:"南港燒餅店",distance:650,ac:false,types:["其他/小吃"]},
- {name:"健康廚房",distance:850,ac:true,types:["飯","健康餐/沙拉"]},
- {name:"南港水餃館",distance:920,ac:true,types:["鍋貼/水餃","麵"]},
- {name:"日式烏龍麵",distance:980,ac:true,types:["麵"]},
- {name:"南港湯包小館",distance:1100,ac:true,types:["其他/小吃"]},
- {name:"朱記餡餅粥店",distance:1200,ac:true,types:["麵","飯","鍋貼/水餃"]},
- {name:"昆陽雞肉飯",distance:1550,ac:true,types:["飯","其他/小吃"]},
- {name:"清爽沙拉研究所",distance:1800,ac:true,types:["健康餐/沙拉"]}
-];
+/* =========================================================
+   RESTAURANTS
+   基準點：台北市重慶北路一段 1-1 號
+========================================================= */
 
-const foodTypes=[
- "麵","飯","鍋貼/水餃",
- "漢堡/美式","健康餐/沙拉","其他/小吃"
-];
+const restaurants = [
 
-/* ======================================================
-   FILTER UI
-====================================================== */
+{
+ id:1,
+ name:"No Design Kitchen 無設廚房",
+ type:["餐盒","台式"],
+ price:1,
+ note:"重慶北路一段 1 號",
+ map:"https://www.google.com/maps/search/?api=1&query=No+Design+Kitchen+無設廚房"
+},
 
-const foods=document.getElementById("foods");
+{
+ id:2,
+ name:"一刺生魚片丼飯握壽司",
+ type:["日式"],
+ price:2,
+ note:"重慶北路一段 6 號",
+ map:"https://www.google.com/maps/search/?api=1&query=一刺生魚片丼飯握壽司"
+},
 
-foodTypes.forEach(type=>{
- const label=document.createElement("label");
- label.className="check";
+{
+ id:3,
+ name:"元味料理",
+ type:["台式"],
+ price:1,
+ note:"華陰街 227 巷",
+ map:"https://www.google.com/maps/search/?api=1&query=元味料理+台北"
+},
 
- const input=document.createElement("input");
- input.type="checkbox";
- input.value=type;
- input.checked=true;
+{
+ id:4,
+ name:"大稻埕米粉湯",
+ type:["台式","麵食"],
+ price:1,
+ note:"重慶北路一段 26 巷",
+ map:"https://www.google.com/maps/search/?api=1&query=大稻埕米粉湯"
+},
 
- label.appendChild(input);
- label.append(type);
+{
+ id:5,
+ name:"三多屋爸爸嘴",
+ type:["日式"],
+ price:2,
+ note:"太原路 19 號",
+ map:"https://www.google.com/maps/search/?api=1&query=三多屋爸爸嘴"
+},
 
- foods.appendChild(label);
-});
+{
+ id:6,
+ name:"羅本家咖哩 大同店",
+ type:["日式","咖哩"],
+ price:2,
+ note:"長安西路 138 巷",
+ map:"https://www.google.com/maps/search/?api=1&query=羅本家咖哩大同店"
+},
 
-function filteredRestaurants(){
+{
+ id:7,
+ name:"新高軒 北車店",
+ type:["日式","咖哩"],
+ price:2,
+ note:"北平西路 3 號",
+ map:"https://www.google.com/maps/search/?api=1&query=新高軒北車店"
+},
 
- const distance=Number(document.getElementById("distance").value);
- const needAC=document.getElementById("ac").checked;
-
- const selected=[
-   ...foods.querySelectorAll("input:checked")
- ].map(x=>x.value);
-
- return restaurants.filter(r=>
-   r.distance<=distance &&
-   (!needAC || r.ac) &&
-   r.types.some(t=>selected.includes(t))
- );
+{
+ id:8,
+ name:"雞湯桑 Torisan",
+ type:["日式","麵食"],
+ price:2,
+ note:"京站 B3",
+ map:"https://www.google.com/maps/search/?api=1&query=雞湯桑+Torisan+京站"
 }
+
+];
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+let selectedTypes =
+new Set([
+ "台式",
+ "日式",
+ "咖哩",
+ "麵食",
+ "餐盒"
+]);
+
+let selectedPrices =
+new Set([1,2]);
+
+let filtered=[];
+
+let selected=null;
+
+let spinning=false;
+
 
 function updateFilter(){
 
- const list=filteredRestaurants();
+ filtered=restaurants.filter(r=>{
 
- document.getElementById("count").textContent=list.length;
- document.getElementById("choose").disabled=list.length===0;
+   const typeOK=
+   r.type.some(t=>selectedTypes.has(t));
 
- if(list.length===0){
-   setSpeech("「Hmm... 你的條件太嚴格了，我什麼都感應不到。」");
- }else{
-   setSpeech("「很好……我感覺到 " + list.length + " 種可能。」");
- }
+   const priceOK=
+   selectedPrices.has(r.price);
+
+   return typeOK && priceOK;
+
+ });
+
+ document.getElementById("count").textContent=
+ filtered.length;
+
+ document.getElementById("pickButton").disabled=
+ filtered.length===0;
+
+ renderRestaurants();
+
 }
 
-document.querySelectorAll("input,select")
- .forEach(el=>el.addEventListener("change",updateFilter));
 
-/* ======================================================
+document
+.querySelectorAll("[data-type]")
+.forEach(btn=>{
+
+ btn.onclick=()=>{
+
+   const value=btn.dataset.type;
+
+   if(selectedTypes.has(value)){
+     selectedTypes.delete(value);
+     btn.classList.remove("active");
+   }else{
+     selectedTypes.add(value);
+     btn.classList.add("active");
+   }
+
+   updateFilter();
+
+ };
+
+});
+
+
+document
+.querySelectorAll("[data-price]")
+.forEach(btn=>{
+
+ btn.onclick=()=>{
+
+   const value=
+   Number(btn.dataset.price);
+
+   if(selectedPrices.has(value)){
+     selectedPrices.delete(value);
+     btn.classList.remove("active");
+   }else{
+     selectedPrices.add(value);
+     btn.classList.add("active");
+   }
+
+   updateFilter();
+
+ };
+
+});
+
+
+/* =========================================================
+   RESTAURANT POSITIONS
+========================================================= */
+
+const positions=[
+ [17,25],
+ [72,25],
+ [8,45],
+ [81,45],
+ [14,67],
+ [74,67],
+ [31,18],
+ [60,18]
+];
+
+
+function renderRestaurants(){
+
+ const layer=
+ document.getElementById("restaurantLayer");
+
+ layer.innerHTML="";
+
+ filtered.forEach((r,i)=>{
+
+   const item=
+   document.createElement("div");
+
+   item.className="restaurant";
+
+   item.dataset.id=r.id;
+
+   const pos=
+   positions[i % positions.length];
+
+   item.style.left=pos[0]+"%";
+   item.style.top=pos[1]+"%";
+
+   item.innerHTML=`
+     <div class="restaurant-name">
+       ${r.name}
+     </div>
+
+     <div class="restaurant-type">
+       ${r.type.join(" · ")}
+     </div>
+   `;
+
+   layer.appendChild(item);
+
+ });
+
+}
+
+
+/* =========================================================
    THREE.JS
-====================================================== */
+========================================================= */
 
-const container=document.getElementById("scene");
+const container=
+document.getElementById("three");
 
-const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x070707,.055);
+const scene=
+new THREE.Scene();
 
-const camera=new THREE.PerspectiveCamera(
- 45,
- window.innerWidth/window.innerHeight,
+
+const camera=
+new THREE.PerspectiveCamera(
+ 38,
+ container.clientWidth/container.clientHeight,
  .1,
  100
 );
 
-camera.position.set(0,1.7,8);
+camera.position.set(
+ 0,
+ 1,
+ 8
+);
 
-const renderer=new THREE.WebGLRenderer({
+
+/* renderer */
+
+const renderer=
+new THREE.WebGLRenderer({
  antialias:true,
  alpha:true
 });
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(
+ Math.min(devicePixelRatio,2)
+);
+
+renderer.setSize(
+ container.clientWidth,
+ container.clientHeight
+);
+
 renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 
-container.appendChild(renderer.domElement);
+renderer.outputEncoding=
+THREE.sRGBEncoding;
 
-/* ======================================================
+container.appendChild(
+ renderer.domElement
+);
+
+
+/* =========================================================
    LIGHTING
-====================================================== */
+========================================================= */
 
-scene.add(new THREE.AmbientLight(0x6b5439,.45));
-
-const keyLight=new THREE.PointLight(
- 0xffb24c,
- 2.5,
- 20
+scene.add(
+ new THREE.HemisphereLight(
+   0xfff6df,
+   0xb88c69,
+   2.1
+ )
 );
 
-keyLight.position.set(0,4,4);
-keyLight.castShadow=true;
 
-scene.add(keyLight);
-
-const rimLight=new THREE.PointLight(
- 0x6551aa,
- 1.2,
- 15
+const key=
+new THREE.DirectionalLight(
+ 0xffe1a5,
+ 2.4
 );
 
-rimLight.position.set(-4,3,-3);
-
-scene.add(rimLight);
-
-/* ======================================================
-   STONE FLOOR
-====================================================== */
-
-const floor=new THREE.Mesh(
- new THREE.CircleGeometry(10,64),
- new THREE.MeshStandardMaterial({
-   color:0x17130f,
-   roughness:.95,
-   metalness:.05
- })
+key.position.set(
+ -4,7,5
 );
 
-floor.rotation.x=-Math.PI/2;
-floor.position.y=-1.75;
-floor.receiveShadow=true;
+key.castShadow=true;
 
-scene.add(floor);
+scene.add(key);
 
-/* Decorative rings */
 
-for(let r=2;r<8;r+=1.5){
-
- const ring=new THREE.Mesh(
-   new THREE.RingGeometry(r,r+.015,90),
-   new THREE.MeshBasicMaterial({
-     color:0x5a4729,
-     transparent:true,
-     opacity:.32,
-     side:THREE.DoubleSide
-   })
- );
-
- ring.rotation.x=-Math.PI/2;
- ring.position.y=-1.73;
-
- scene.add(ring);
-}
-
-/* ======================================================
-   MAGIC HAT
-====================================================== */
-
-const hat=new THREE.Group();
-scene.add(hat);
-
-hat.position.y=-.35;
-
-/* brim */
-
-const brim=new THREE.Mesh(
- new THREE.CylinderGeometry(2.05,2.3,.22,48),
- new THREE.MeshStandardMaterial({
-   color:0x3a2414,
-   roughness:.93
- })
+const fill=
+new THREE.DirectionalLight(
+ 0xffffff,
+ 1.5
 );
 
-brim.scale.z=.65;
-brim.castShadow=true;
-
-hat.add(brim);
-
-/* crown */
-
-const crownGeometry=new THREE.CylinderGeometry(
- .38,
- 1.35,
- 2.8,
- 32,
- 8
+fill.position.set(
+ 5,3,4
 );
 
-const positions=crownGeometry.attributes.position;
+scene.add(fill);
 
-for(let i=0;i<positions.count;i++){
 
- const x=positions.getX(i);
- const y=positions.getY(i);
- const z=positions.getZ(i);
+/* =========================================================
+   ELEPHANT
+========================================================= */
 
- const deformation=
-   Math.sin(y*3+x*2)*.08 +
-   Math.cos(z*5)*.05;
+const elephant=
+new THREE.Group();
 
- positions.setX(i,x+deformation);
- positions.setZ(i,z+deformation*.6);
-}
+elephant.position.y=-.25;
 
-crownGeometry.computeVertexNormals();
+scene.add(elephant);
 
-const crown=new THREE.Mesh(
- crownGeometry,
- new THREE.MeshStandardMaterial({
-   color:0x422817,
-   roughness:1
- })
-);
 
-crown.position.y=1.35;
-crown.rotation.z=-.15;
-crown.castShadow=true;
-
-hat.add(crown);
-
-/* bent top */
-
-const tip=new THREE.Mesh(
- new THREE.ConeGeometry(.65,1.45,28),
- new THREE.MeshStandardMaterial({
-   color:0x392214,
-   roughness:1
- })
-);
-
-tip.position.set(-.35,3.0,0);
-tip.rotation.z=.55;
-
-hat.add(tip);
-
-/* face folds */
-
-const eyeMaterial=new THREE.MeshBasicMaterial({
- color:0x080604
+const skin=
+new THREE.MeshStandardMaterial({
+ color:0x8ba4a7,
+ roughness:.72
 });
 
-function eye(x){
 
- const e=new THREE.Mesh(
-   new THREE.SphereGeometry(.14,16,8),
-   eyeMaterial
+const skinDark=
+new THREE.MeshStandardMaterial({
+ color:0x6d8589,
+ roughness:.8
+});
+
+
+const pink=
+new THREE.MeshStandardMaterial({
+ color:0xd89b9c,
+ roughness:.75
+});
+
+
+const eyeMat=
+new THREE.MeshStandardMaterial({
+ color:0x292522,
+ roughness:.5
+});
+
+
+/* BODY */
+
+const body=
+new THREE.Mesh(
+ new THREE.SphereGeometry(
+   1.45,40,30
+ ),
+ skin
+);
+
+body.scale.set(
+ 1.15,1.05,.9
+);
+
+body.position.y=.15;
+
+body.castShadow=true;
+
+elephant.add(body);
+
+
+/* HEAD */
+
+const head=
+new THREE.Mesh(
+ new THREE.SphereGeometry(
+   1.05,40,30
+ ),
+ skin
+);
+
+head.position.set(
+ 0,1.2,.75
+);
+
+head.scale.set(
+ 1,1,.85
+);
+
+head.castShadow=true;
+
+elephant.add(head);
+
+
+/* EARS */
+
+function makeEar(x){
+
+ const ear=
+ new THREE.Mesh(
+   new THREE.SphereGeometry(
+     .85,30,20
+   ),
+   skin
  );
 
- e.scale.set(1.4,.35,.3);
- e.position.set(x,1.45,1.15);
+ ear.scale.set(
+   .28,1,.7
+ );
+
+ ear.position.set(
+   x,1.35,.55
+ );
+
+ return ear;
+}
+
+const earL=makeEar(-1);
+const earR=makeEar(1);
+
+elephant.add(earL);
+elephant.add(earR);
+
+
+/* inner ears */
+
+function innerEar(x){
+
+ const e=
+ new THREE.Mesh(
+   new THREE.SphereGeometry(
+     .62,24,18
+   ),
+   pink
+ );
+
+ e.scale.set(
+   .18,.85,.55
+ );
+
+ e.position.set(
+   x,1.35,.72
+ );
 
  return e;
 }
 
-const leftEye=eye(-.42);
-const rightEye=eye(.42);
-
-hat.add(leftEye,rightEye);
-
-/* mouth */
-
-const mouth=new THREE.Mesh(
- new THREE.TorusGeometry(.42,.055,8,30,Math.PI),
- new THREE.MeshBasicMaterial({
-   color:0x090604
- })
+elephant.add(
+ innerEar(-1.04)
 );
 
-mouth.position.set(0,.85,1.19);
-mouth.rotation.z=Math.PI;
-
-hat.add(mouth);
-
-/* ======================================================
-   FLOATING CANDLES
-====================================================== */
-
-const candles=[];
-
-for(let i=0;i<22;i++){
-
- const candle=new THREE.Group();
-
- const body=new THREE.Mesh(
-   new THREE.CylinderGeometry(.035,.04,.45,10),
-   new THREE.MeshStandardMaterial({
-     color:0xe8d9b1
-   })
- );
-
- const flame=new THREE.Mesh(
-   new THREE.SphereGeometry(.045,10,10),
-   new THREE.MeshBasicMaterial({
-     color:0xffa62b
-   })
- );
-
- flame.scale.y=1.7;
- flame.position.y=.27;
-
- candle.add(body,flame);
-
- const angle=Math.random()*Math.PI*2;
- const radius=4+Math.random()*5;
-
- candle.position.set(
-   Math.cos(angle)*radius,
-   .5+Math.random()*5,
-   Math.sin(angle)*radius
- );
-
- candle.userData.baseY=candle.position.y;
- candle.userData.speed=.3+Math.random()*.6;
- candle.userData.offset=Math.random()*10;
-
- scene.add(candle);
- candles.push(candle);
-}
-
-/* ======================================================
-   MAGIC PARTICLES
-====================================================== */
-
-const particleCount=500;
-
-const particleGeometry=new THREE.BufferGeometry();
-const particlePositions=new Float32Array(particleCount*3);
-
-for(let i=0;i<particleCount;i++){
-
- particlePositions[i*3]=(Math.random()-.5)*16;
- particlePositions[i*3+1]=Math.random()*8-2;
- particlePositions[i*3+2]=(Math.random()-.5)*16;
-}
-
-particleGeometry.setAttribute(
- "position",
- new THREE.BufferAttribute(particlePositions,3)
+elephant.add(
+ innerEar(1.04)
 );
 
-const particleMaterial=new THREE.PointsMaterial({
- color:0xd9ae62,
- size:.025,
- transparent:true,
- opacity:.55
+
+/* EYES */
+
+function eye(x){
+
+ const e=
+ new THREE.Mesh(
+   new THREE.SphereGeometry(
+     .095,18,12
+   ),
+   eyeMat
+ );
+
+ e.position.set(
+   x,1.48,1.56
+ );
+
+ return e;
+}
+
+elephant.add(eye(-.35));
+elephant.add(eye(.35));
+
+
+/* LEGS */
+
+function leg(x,z){
+
+ const l=
+ new THREE.Mesh(
+   new THREE.CylinderGeometry(
+     .28,.32,1.25,24
+   ),
+   skinDark
+ );
+
+ l.position.set(
+   x,-1,z
+ );
+
+ l.castShadow=true;
+
+ return l;
+}
+
+elephant.add(leg(-.65,.45));
+elephant.add(leg(.65,.45));
+elephant.add(leg(-.65,-.45));
+elephant.add(leg(.65,-.45));
+
+
+/* =========================================================
+   TRUNK
+========================================================= */
+
+const trunkGroup=
+new THREE.Group();
+
+trunkGroup.position.set(
+ 0,
+ .95,
+ 1.45
+);
+
+elephant.add(trunkGroup);
+
+
+/* trunk pieces */
+
+const trunkSegments=[];
+
+const segmentCount=9;
+
+for(let i=0;i<segmentCount;i++){
+
+ const radius=
+ .28 - i*.018;
+
+ const segment=
+ new THREE.Mesh(
+
+   new THREE.SphereGeometry(
+     radius,
+     20,
+     14
+   ),
+
+   skinDark
+
+ );
+
+ segment.scale.set(
+   1,
+   1.45,
+   1
+ );
+
+ segment.position.y=
+   -.28*i;
+
+ segment.position.z=
+   .08*i;
+
+ trunkGroup.add(segment);
+
+ trunkSegments.push(segment);
+
+}
+
+
+/* =========================================================
+   HAT
+========================================================= */
+
+const hatMat=
+new THREE.MeshStandardMaterial({
+ color:0xd85148,
+ roughness:.65
 });
 
-const particles=new THREE.Points(
- particleGeometry,
- particleMaterial
+
+const circusHat=
+new THREE.Mesh(
+
+ new THREE.CylinderGeometry(
+   .46,.55,.5,32
+ ),
+
+ hatMat
+
+);
+
+circusHat.position.set(
+ 0,
+ 2.35,
+ .7
+);
+
+circusHat.rotation.z=.08;
+
+elephant.add(circusHat);
+
+
+const hatTop=
+new THREE.Mesh(
+
+ new THREE.CylinderGeometry(
+   .34,.42,.65,32
+ ),
+
+ hatMat
+
+);
+
+hatTop.position.set(
+ 0,
+ 2.8,
+ .7
+);
+
+hatTop.rotation.z=.08;
+
+elephant.add(hatTop);
+
+
+const hatBand=
+new THREE.Mesh(
+
+ new THREE.CylinderGeometry(
+   .43,.43,.13,32
+ ),
+
+ new THREE.MeshStandardMaterial({
+   color:0xe5b64e
+ })
+
+);
+
+hatBand.position.set(
+ 0,
+ 2.55,
+ .7
+);
+
+elephant.add(hatBand);
+
+
+/* =========================================================
+   CIRCUS PLATFORM
+========================================================= */
+
+const platform=
+new THREE.Mesh(
+
+ new THREE.CylinderGeometry(
+   2.25,
+   2.4,
+   .25,
+   64
+ ),
+
+ new THREE.MeshStandardMaterial({
+   color:0xd65b50,
+   roughness:.7
+ })
+
+);
+
+platform.position.y=-1.65;
+
+platform.receiveShadow=true;
+
+scene.add(platform);
+
+
+const platformTop=
+new THREE.Mesh(
+
+ new THREE.CylinderGeometry(
+   2.08,
+   2.08,
+   .04,
+   64
+ ),
+
+ new THREE.MeshStandardMaterial({
+   color:0xf3cf87
+ })
+
+);
+
+platformTop.position.y=-1.5;
+
+scene.add(platformTop);
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+const pCount=80;
+
+const pGeometry=
+new THREE.BufferGeometry();
+
+const pArray=
+new Float32Array(
+ pCount*3
+);
+
+for(let i=0;i<pCount;i++){
+
+ const radius=
+ 2.7+Math.random()*2;
+
+ const angle=
+ Math.random()*Math.PI*2;
+
+ pArray[i*3]=
+ Math.cos(angle)*radius;
+
+ pArray[i*3+1]=
+ Math.random()*5-1;
+
+ pArray[i*3+2]=
+ Math.sin(angle)*radius;
+
+}
+
+pGeometry.setAttribute(
+ "position",
+ new THREE.BufferAttribute(
+   pArray,3
+ )
+);
+
+const pMaterial=
+new THREE.PointsMaterial({
+ color:0xd49a3b,
+ size:.04,
+ transparent:true,
+ opacity:.42
+});
+
+const particles=
+new THREE.Points(
+ pGeometry,
+ pMaterial
 );
 
 scene.add(particles);
 
-/* ======================================================
-   FLOATING RESTAURANT TEXT
-====================================================== */
 
-let restaurantSprites=[];
+/* =========================================================
+   TRUNK MOTION
+========================================================= */
 
-function textTexture(text){
+const clock=
+new THREE.Clock();
 
- const canvas=document.createElement("canvas");
- canvas.width=800;
- canvas.height=150;
+let startTime=0;
+let duration=4.2;
 
- const ctx=canvas.getContext("2d");
 
- ctx.font="32px Georgia";
- ctx.textAlign="center";
- ctx.textBaseline="middle";
+/*
+   每一節象鼻根據 sway 產生不同幅度，
+   所以不是整條像木棍旋轉，
+   而是會有甩動的感覺。
+*/
 
- ctx.fillStyle="#ead59e";
- ctx.shadowColor="#d9a84e";
- ctx.shadowBlur=15;
+function animateTrunk(sway){
 
- ctx.fillText(text,400,75);
+ trunkSegments.forEach(
+   (segment,index)=>{
 
- const texture=new THREE.CanvasTexture(canvas);
+     const influence=
+     index/(segmentCount-1);
 
- return texture;
-}
+     segment.position.x=
+       Math.sin(
+         sway+
+         influence*1.8
+       ) *
+       influence *
+       .72;
 
-function createRestaurantSpirits(){
+     segment.rotation.z=
+       Math.sin(
+         sway+
+         influence*1.5
+       ) *
+       influence *
+       .34;
 
- restaurantSprites.forEach(s=>scene.remove(s));
- restaurantSprites=[];
-
- const list=filteredRestaurants();
-
- list.forEach((r,i)=>{
-
-   const material=new THREE.SpriteMaterial({
-     map:textTexture(r.name),
-     transparent:true,
-     opacity:.42
-   });
-
-   const sprite=new THREE.Sprite(material);
-
-   const angle=i/list.length*Math.PI*2;
-
-   sprite.position.set(
-     Math.cos(angle)*4,
-     .4+Math.sin(i*1.4)*1.2,
-     Math.sin(angle)*4
-   );
-
-   sprite.scale.set(2.5,.47,1);
-
-   sprite.userData.angle=angle;
-
-   scene.add(sprite);
-   restaurantSprites.push(sprite);
- });
-}
-
-/* ======================================================
-   SORTING SEQUENCE
-====================================================== */
-
-let sorting=false;
-let sortingStart=0;
-let chosenRestaurant=null;
-
-const speeches=[
- "「Hmm... 讓我看看……」",
- "「你今天似乎不想走得太遠……」",
- "「我聞到了午餐的氣息……」",
- "「飯？麵？還是某種更危險的選擇……」",
- "「有了。我知道你今天該去哪裡了。」"
-];
-
-function setSpeech(text){
- document.getElementById("speech").textContent=text;
-}
-
-function startSorting(){
-
- if(sorting)return;
-
- const list=filteredRestaurants();
- if(!list.length)return;
-
- chosenRestaurant=
-   list[Math.floor(Math.random()*list.length)];
-
- sorting=true;
- sortingStart=performance.now();
-
- document.getElementById("choose").disabled=true;
-
- createRestaurantSpirits();
-
- setSpeech(speeches[0]);
-}
-
-document.getElementById("choose")
- .addEventListener("click",startSorting);
-
-function finishSorting(){
-
- sorting=false;
-
- const r=chosenRestaurant;
-
- setSpeech("「那麼—— " + r.name + "！」");
-
- document.getElementById("resultName").textContent=r.name;
-
- const minutes=Math.max(
-   3,
-   Math.round(r.distance/80)
+   }
  );
 
- document.getElementById("resultMeta").textContent=
-   r.distance+" 公尺 · 步行約 "+minutes+" 分鐘";
-
- const tags=document.getElementById("tags");
- tags.innerHTML="";
-
- [
-   r.ac?"有冷氣":"無冷氣",
-   ...r.types
- ].forEach(text=>{
-
-   const tag=document.createElement("span");
-   tag.className="tag";
-   tag.textContent=text;
-
-   tags.appendChild(tag);
- });
-
- setTimeout(()=>{
-   document.getElementById("result").classList.add("show");
- },650);
-
- document.getElementById("choose").disabled=false;
 }
 
-/* ======================================================
-   RESULT ACTIONS
-====================================================== */
 
-document.getElementById("again").onclick=()=>{
- document.getElementById("result").classList.remove("show");
- startSorting();
-};
+/* =========================================================
+   ANIMATION
+========================================================= */
 
-document.getElementById("back").onclick=()=>{
- document.getElementById("result").classList.remove("show");
-};
+function easeOut(t){
+ return 1-Math.pow(1-t,4);
+}
 
-/* ======================================================
-   CAMERA INTERACTION
-====================================================== */
 
-let dragging=false;
-let lastX=0;
-let cameraAngle=0;
-
-renderer.domElement.addEventListener("pointerdown",e=>{
- dragging=true;
- lastX=e.clientX;
-});
-
-window.addEventListener("pointerup",()=>{
- dragging=false;
-});
-
-window.addEventListener("pointermove",e=>{
-
- if(!dragging)return;
-
- cameraAngle+=(e.clientX-lastX)*.004;
- lastX=e.clientX;
-});
-
-renderer.domElement.addEventListener("wheel",e=>{
-
- camera.position.z+=e.deltaY*.003;
- camera.position.z=Math.max(5,Math.min(11,camera.position.z));
-});
-
-/* ======================================================
-   ANIMATION LOOP
-====================================================== */
-
-function animate(time){
+function animate(){
 
  requestAnimationFrame(animate);
 
- const t=time*.001;
+ const time=
+ clock.getElapsedTime();
 
- /* camera orbit */
 
- if(!dragging){
-   cameraAngle+=.00035;
+ if(!spinning){
+
+   animateTrunk(
+     Math.sin(time*1.5)*.45
+   );
+
+   elephant.position.y=
+     -.25+
+     Math.sin(time*1.25)*.035;
+
+   earL.rotation.z=
+     Math.sin(time*1.4)*.035;
+
+   earR.rotation.z=
+     -Math.sin(time*1.4)*.035;
+
  }
 
- camera.position.x=Math.sin(cameraAngle)*1.5;
- camera.lookAt(0,.7,0);
 
- /* hat idle */
+ if(spinning){
 
- if(!sorting){
+   const elapsed=
+   performance.now()/1000-startTime;
 
-   hat.rotation.y=Math.sin(t*.45)*.08;
-   hat.position.y=-.35+Math.sin(t*.8)*.025;
+   const p=
+   Math.min(
+     elapsed/duration,
+     1
+   );
 
- }else{
+   /*
+      一開始速度很快，
+      最後慢慢收斂到選中的方向。
+   */
 
-   const elapsed=time-sortingStart;
+   const speed=
+   (1-p);
 
-   hat.rotation.y=
-     Math.sin(elapsed*.015)*.17;
+   const sway=
+   Math.sin(
+     p*Math.PI*18
+   ) *
+   2.8 *
+   speed;
 
-   hat.rotation.z=
-     Math.sin(elapsed*.021)*.035;
+   animateTrunk(sway);
 
-   crown.scale.y=
-     1+Math.sin(elapsed*.018)*.025;
 
-   mouth.scale.y=
-     .7+Math.abs(Math.sin(elapsed*.012))*1.6;
+   elephant.rotation.y=
+     Math.sin(
+       p*Math.PI*9
+     ) *
+     .17 *
+     speed;
 
-   particles.rotation.y+=.015;
 
-   restaurantSprites.forEach((sprite,i)=>{
+   earL.rotation.z=
+     Math.sin(
+       p*Math.PI*15
+     )*.2*speed;
 
-     sprite.userData.angle+=.025;
+   earR.rotation.z=
+     -earL.rotation.z;
 
-     sprite.position.x=
-       Math.cos(sprite.userData.angle)*3.6;
 
-     sprite.position.z=
-       Math.sin(sprite.userData.angle)*3.6;
-
-     sprite.material.opacity=
-       .35+Math.sin(t*5+i)*.22;
-   });
-
-   if(elapsed>650 && elapsed<1300){
-     setSpeech(speeches[1]);
+   if(p>=1){
+     finishPick();
    }
 
-   if(elapsed>1300 && elapsed<2000){
-     setSpeech(speeches[2]);
-   }
-
-   if(elapsed>2000 && elapsed<2750){
-     setSpeech(speeches[3]);
-   }
-
-   if(elapsed>2750 && elapsed<3400){
-     setSpeech(speeches[4]);
-   }
-
-   if(elapsed>3800){
-     finishSorting();
-   }
  }
 
- /* candles */
 
- candles.forEach(c=>{
+ particles.rotation.y+=.0008;
 
-   c.position.y=
-     c.userData.baseY+
-     Math.sin(t*c.userData.speed+c.userData.offset)*.15;
+ renderer.render(
+   scene,
+   camera
+ );
 
-   const flame=c.children[1];
-
-   flame.scale.y=
-     1.4+Math.sin(t*8+c.userData.offset)*.35;
- });
-
- particles.rotation.y+=.0004;
-
- renderer.render(scene,camera);
 }
 
-updateFilter();
-createRestaurantSpirits();
-animate(0);
+animate();
 
-/* ======================================================
-   RESIZE
-====================================================== */
 
-window.addEventListener("resize",()=>{
+/* =========================================================
+   PICK
+========================================================= */
 
- camera.aspect=
-   window.innerWidth/window.innerHeight;
+const messages=[
 
- camera.updateProjectionMatrix();
+ "鼻子開始甩囉——",
 
- renderer.setSize(
-   window.innerWidth,
-   window.innerHeight
+ "等等……它好像聞到咖哩了……",
+
+ "這邊？還是那邊？",
+
+ "大象說不要再回答「都可以」……",
+
+ "午休時間正在倒數……",
+
+ "快決定了！"
+
+];
+
+
+function startPick(){
+
+ if(
+   spinning ||
+   !filtered.length
+ ) return;
+
+
+ spinning=true;
+
+
+ selected=
+ filtered[
+   Math.floor(
+     Math.random()*filtered.length
+   )
+ ];
+
+
+ startTime=
+ performance.now()/1000;
+
+
+ document.getElementById(
+   "pickButton"
+ ).disabled=true;
+
+
+ let index=0;
+
+
+ document.getElementById(
+   "message"
+ ).textContent=
+ messages[0];
+
+
+ window.msgTimer=
+ setInterval(()=>{
+
+   index++;
+
+   document.getElementById(
+     "message"
+   ).textContent=
+     messages[
+       index%messages.length
+     ];
+
+ },620);
+
+}
+
+
+function finishPick(){
+
+ spinning=false;
+
+ clearInterval(
+   window.msgTimer
  );
-});
+
+
+ document.getElementById(
+   "message"
+ ).textContent=
+ "🐘 就是它！大象決定了！";
+
+
+ document
+ .querySelectorAll(".restaurant")
+ .forEach(el=>{
+
+   el.classList.toggle(
+     "selected",
+     Number(el.dataset.id)===
+     selected.id
+   );
+
+ });
+
+
+ setTimeout(
+   ()=>showResult(selected),
+   600
+ );
+
+
+ document.getElementById(
+   "pickButton"
+ ).disabled=false;
+
+}
+
+
+document.getElementById(
+ "pickButton"
+).onclick=startPick;
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+function showResult(r){
+
+ document.getElementById(
+   "resultName"
+ ).textContent=r.name;
+
+
+ document.getElementById(
+   "resultInfo"
+ ).textContent=r.note;
+
+
+ const tagBox=
+ document.getElementById(
+   "resultTags"
+ );
+
+
+ tagBox.innerHTML="";
+
+
+ [
+   ...r.type,
+   r.price===1
+     ? "$ 平價午餐"
+     : "$$ 中等預算"
+ ].forEach(tag=>{
+
+   const span=
+   document.createElement(
+     "span"
+   );
+
+   span.textContent=tag;
+
+   tagBox.appendChild(span);
+
+ });
+
+
+ document.getElementById(
+   "mapLink"
+ ).href=r.map;
+
+
+ document.getElementById(
+   "modal"
+ ).classList.add(
+   "show"
+ );
+
+}
+
+
+document.getElementById(
+ "again"
+).onclick=()=>{
+
+ document.getElementById(
+   "modal"
+ ).classList.remove(
+   "show"
+ );
+
+ setTimeout(
+   startPick,
+   250
+ );
+
+};
+
+
+document.getElementById(
+ "close"
+).onclick=()=>{
+
+ document.getElementById(
+   "modal"
+ ).classList.remove(
+   "show"
+ );
+
+ document.getElementById(
+   "message"
+ ).textContent=
+   "🐘 改好條件，再叫大象甩一次。";
+
+};
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+ "resize",
+ ()=>{
+
+   camera.aspect=
+     container.clientWidth/
+     container.clientHeight;
+
+   camera.updateProjectionMatrix();
+
+   renderer.setSize(
+     container.clientWidth,
+     container.clientHeight
+   );
+
+ }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+updateFilter();
+
 </script>
 
 </body>
