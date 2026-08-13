@@ -2,3006 +2,875 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>AI3 魔法午餐分類帽</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <style>
-/* =========================================================
-   01. BASE
-========================================================= */
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#070707;color:#f4e7bd;font-family:"Microsoft JhengHei",Arial,sans-serif}
+#scene{position:fixed;inset:0}
+canvas{display:block}
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-:root{
-  --cream:#f8f2e6;
-  --paper:#fffdf7;
-  --gold:#d89c37;
-  --deep-gold:#a86d19;
-  --brown:#5d412b;
-  --deep-brown:#34271f;
-  --wood:#936a45;
-  --green:#55745a;
-  --wine:#8c4f4d;
-  --line:rgba(93,65,43,.14);
-  --shadow:0 24px 70px rgba(83,59,36,.13);
-}
-
-html,
-body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-}
-
-body{
-  font-family:
-    "Noto Sans TC",
-    "PingFang TC",
-    "Microsoft JhengHei",
-    sans-serif;
-
-  color:var(--deep-brown);
-
+.vignette{
+  position:fixed;inset:0;pointer-events:none;
   background:
-    radial-gradient(
-      circle at 50% 30%,
-      #fffdf6 0%,
-      #f8f0df 50%,
-      #eadcc5 100%
-    );
+    radial-gradient(circle at 50% 45%,transparent 20%,rgba(0,0,0,.18) 55%,rgba(0,0,0,.86) 100%);
 }
-
-button,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-/* =========================================================
-   02. BACKGROUND
-========================================================= */
-
-.magic-bg{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-}
-
-.sun-glow{
-  position:absolute;
-  width:700px;
-  height:700px;
-
-  top:-360px;
-  left:50%;
-
-  transform:translateX(-50%);
-
-  border-radius:50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255,238,182,.95),
-      rgba(255,238,182,.3) 45%,
-      transparent 70%
-    );
-}
-
-.window{
-  position:absolute;
-
-  top:8%;
-  left:50%;
-
-  width:290px;
-  height:520px;
-
-  transform:translateX(-50%);
-
-  border-radius:150px 150px 15px 15px;
-
-  border:18px solid rgba(141,102,64,.11);
-
-  box-shadow:
-    inset 0 0 80px rgba(255,226,154,.32);
-
-  opacity:.5;
-}
-
-.window::before{
-  content:"";
-
-  position:absolute;
-  left:50%;
-  top:0;
-  bottom:0;
-
-  width:10px;
-
-  background:rgba(141,102,64,.09);
-
-  transform:translateX(-50%);
-}
-
-.window::after{
-  content:"";
-
-  position:absolute;
-  left:0;
-  right:0;
-  top:45%;
-
-  height:10px;
-
-  background:rgba(141,102,64,.09);
-}
-
-.bg-orb{
-  position:absolute;
-  border-radius:50%;
-
-  filter:blur(2px);
-
-  animation:floatOrb 7s ease-in-out infinite;
-}
-
-.orb1{
-  width:10px;
-  height:10px;
-
-  left:18%;
-  top:30%;
-
-  background:#dfae51;
-
-  box-shadow:
-    0 0 25px rgba(223,174,81,.9);
-}
-
-.orb2{
-  width:7px;
-  height:7px;
-
-  right:18%;
-  top:42%;
-
-  background:#e9ba64;
-
-  animation-delay:-2s;
-}
-
-.orb3{
-  width:6px;
-  height:6px;
-
-  left:28%;
-  bottom:20%;
-
-  background:#c38a32;
-
-  animation-delay:-4s;
-}
-
-@keyframes floatOrb{
-  0%,100%{
-    transform:translateY(0);
-    opacity:.35;
-  }
-
-  50%{
-    transform:translateY(-25px);
-    opacity:1;
-  }
-}
-
-/* =========================================================
-   03. HEADER
-========================================================= */
 
 header{
-  position:absolute;
-
-  top:0;
-  left:0;
-  right:0;
-
-  height:86px;
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  padding:0 38px;
-
-  z-index:20;
-
-  border-bottom:1px solid var(--line);
-
-  background:rgba(255,253,247,.7);
-
-  backdrop-filter:blur(18px);
+  position:fixed;top:25px;left:50%;transform:translateX(-50%);
+  text-align:center;z-index:10;pointer-events:none;
+}
+header small{letter-spacing:5px;color:#b89c62;font-size:11px}
+header h1{
+  margin:7px 0 0;font-family:Georgia,serif;font-size:25px;
+  font-weight:normal;letter-spacing:2px;color:#f4dfad;
+  text-shadow:0 0 20px rgba(213,171,91,.35);
 }
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
+.panel{
+  position:fixed;left:28px;top:50%;transform:translateY(-50%);
+  width:255px;padding:22px;z-index:10;
+  border:1px solid rgba(216,180,106,.25);
+  background:linear-gradient(145deg,rgba(26,20,13,.87),rgba(8,8,8,.75));
+  backdrop-filter:blur(14px);
+  border-radius:7px;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
 }
-
-.logo{
-  width:46px;
-  height:46px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  border-radius:15px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #e2b45e,
-      #b77b26
-    );
-
-  color:white;
-
-  font-family:Georgia,serif;
-  font-weight:bold;
-  font-size:19px;
-
-  box-shadow:
-    0 9px 25px rgba(173,116,31,.25);
+.panel-title{
+  font-family:Georgia,serif;color:#d7b66f;font-size:16px;
+  padding-bottom:12px;border-bottom:1px solid rgba(216,180,106,.18);
+  margin-bottom:18px;
 }
-
-.brand-title{
-  font-family:
-    Georgia,
-    "Noto Serif TC",
-    serif;
-
-  font-size:19px;
-  font-weight:bold;
+.group{margin-bottom:18px}
+.group-title{font-size:12px;color:#9d895e;margin-bottom:9px;letter-spacing:1px}
+select{
+  width:100%;background:#15110c;color:#ead8ad;border:1px solid #55462d;
+  border-radius:4px;padding:9px;
 }
+.check{display:block;font-size:13px;margin:8px 0;color:#d8c9a8;cursor:pointer}
+.check input{accent-color:#b38b43;margin-right:7px}
 
-.brand-sub{
-  margin-top:3px;
-
-  font-size:10px;
-
-  letter-spacing:.18em;
-
-  color:#94775c;
+.count{
+  font-size:12px;color:#968461;text-align:center;margin:13px 0;
 }
+.count b{color:#e3c77e;font-size:18px}
 
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:9px;
-
-  color:#866b53;
-  font-size:12px;
-}
-
-.status-dot{
-  width:7px;
-  height:7px;
-
-  border-radius:50%;
-
-  background:#6b8e65;
-
-  box-shadow:
-    0 0 10px rgba(107,142,101,.55);
-}
-
-/* =========================================================
-   04. APP LAYOUT
-========================================================= */
-
-.app{
-  position:absolute;
-
-  top:86px;
-  left:0;
-  right:0;
-  bottom:0;
-
-  display:grid;
-
-  grid-template-columns:330px 1fr;
-
-  z-index:5;
-}
-
-/* =========================================================
-   05. SIDEBAR
-========================================================= */
-
-.sidebar{
-  padding:27px 24px;
-
-  overflow-y:auto;
-
-  border-right:1px solid var(--line);
-
-  background:
-    rgba(255,253,247,.72);
-
-  backdrop-filter:blur(20px);
-}
-
-.sidebar-kicker{
-  color:var(--deep-gold);
-
-  font-size:10px;
-
-  letter-spacing:.22em;
-
-  text-transform:uppercase;
-}
-
-.sidebar h2{
-  margin-top:8px;
-
-  font-family:
-    Georgia,
-    "Noto Serif TC",
-    serif;
-
-  font-size:27px;
-}
-
-.sidebar-intro{
-  margin-top:8px;
-
-  color:#806c5b;
-
-  font-size:12px;
-
-  line-height:1.7;
-}
-
-.filter-section{
-  margin-top:26px;
-}
-
-.filter-label{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  margin-bottom:12px;
-
-  font-size:12px;
-  font-weight:700;
-}
-
-.filter-number{
-  color:var(--deep-gold);
-}
-
-.segmented{
-  display:grid;
-
-  grid-template-columns:repeat(3,1fr);
-
-  padding:4px;
-
-  border:1px solid var(--line);
-
-  border-radius:14px;
-
-  background:rgba(255,255,255,.6);
-}
-
-.segmented button{
-  padding:9px 5px;
-
-  border:0;
-
-  border-radius:10px;
-
-  color:#796552;
-
-  background:transparent;
-
-  font-size:11px;
-
+.magic-button{
+  width:100%;padding:12px;border:1px solid #b89550;
+  color:#f6e6bd;cursor:pointer;border-radius:4px;
+  font-family:Georgia,serif;letter-spacing:1px;
+  background:linear-gradient(#745326,#3c2b15);
+  box-shadow:inset 0 0 20px rgba(255,207,110,.08),0 0 20px rgba(184,145,72,.1);
   transition:.25s;
 }
+.magic-button:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(194,153,77,.28)}
+.magic-button:disabled{opacity:.35;cursor:not-allowed;transform:none}
 
-.segmented button.active{
-  color:white;
-
-  background:var(--brown);
-
-  box-shadow:
-    0 6px 15px rgba(80,56,36,.17);
+.dialogue{
+  position:fixed;bottom:34px;left:50%;transform:translateX(-50%);
+  width:min(590px,90%);text-align:center;z-index:9;pointer-events:none;
 }
-
-/* AIR CONDITION */
-
-.ac-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  padding:13px 15px;
-
-  border:1px solid var(--line);
-
-  border-radius:15px;
-
-  background:rgba(255,255,255,.62);
+#speech{
+  font-family:Georgia,"Microsoft JhengHei",serif;
+  color:#e8d6ad;font-size:17px;letter-spacing:.5px;
+  text-shadow:0 2px 10px #000;
+  min-height:26px;
 }
+.hint{font-size:10px;color:#786d58;margin-top:8px;letter-spacing:2px}
 
-.ac-title{
-  font-size:12px;
-  font-weight:700;
+.result{
+  display:none;position:fixed;inset:0;z-index:30;
+  background:rgba(3,3,3,.72);backdrop-filter:blur(7px);
+  align-items:center;justify-content:center;
 }
-
-.ac-sub{
-  margin-top:3px;
-
-  color:#99836f;
-
-  font-size:10px;
-}
-
-.switch{
-  position:relative;
-
-  width:43px;
-  height:24px;
-
-  border:0;
-  border-radius:50px;
-
-  background:#d5c7b7;
-
-  transition:.25s;
-}
-
-.switch::after{
-  content:"";
-
-  position:absolute;
-
-  width:18px;
-  height:18px;
-
-  left:3px;
-  top:3px;
-
-  border-radius:50%;
-
-  background:white;
-
-  box-shadow:
-    0 2px 5px rgba(0,0,0,.15);
-
-  transition:.25s;
-}
-
-.switch.on{
-  background:var(--green);
-}
-
-.switch.on::after{
-  transform:translateX(19px);
-}
-
-/* CHIPS */
-
-.chips{
-  display:flex;
-  flex-wrap:wrap;
-
-  gap:8px;
-}
-
-.chip{
-  padding:8px 12px;
-
-  border:1px solid var(--line);
-
-  border-radius:100px;
-
-  color:#725f4f;
-
-  background:rgba(255,255,255,.55);
-
-  font-size:11px;
-
-  transition:.2s;
-}
-
-.chip:hover{
-  border-color:#c69a58;
-}
-
-.chip.active{
-  color:#77501b;
-
-  border-color:#d9ac64;
-
-  background:#f4dfb8;
-}
-
-/* COUNT */
-
-.match-box{
-  margin-top:27px;
-
-  padding:17px;
-
-  border:1px solid rgba(183,125,42,.18);
-
-  border-radius:17px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(245,224,186,.65),
-      rgba(255,255,255,.72)
-    );
-}
-
-.match-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.match-title{
-  font-size:11px;
-
-  color:#806a56;
-}
-
-.match-count{
-  font-family:Georgia,serif;
-
-  color:var(--deep-gold);
-
-  font-size:27px;
-  font-weight:bold;
-}
-
-.match-text{
-  margin-top:5px;
-
-  color:#9a826d;
-
-  font-size:10px;
-}
-
-/* BUTTON */
-
-.sort-button{
-  width:100%;
-
-  margin-top:15px;
-  padding:15px 18px;
-
-  border:0;
-  border-radius:16px;
-
-  color:white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #6f5035,
-      #3e2e23
-    );
-
-  box-shadow:
-    0 13px 28px rgba(68,48,33,.22);
-
-  font-size:13px;
-  font-weight:700;
-
-  transition:.25s;
-}
-
-.sort-button:hover{
-  transform:translateY(-2px);
-
-  box-shadow:
-    0 17px 34px rgba(68,48,33,.28);
-}
-
-.sort-button:disabled{
-  cursor:not-allowed;
-
-  opacity:.35;
-
-  transform:none;
-}
-
-/* =========================================================
-   06. STAGE
-========================================================= */
-
-.stage{
-  position:relative;
-
-  overflow:hidden;
-}
-
-#three-container{
-  position:absolute;
-  inset:0;
-}
-
-canvas{
-  display:block;
-}
-
-/* INTRO */
-
-.stage-copy{
-  position:absolute;
-
-  top:27px;
-  left:50%;
-
-  transform:translateX(-50%);
-
-  z-index:7;
-
-  text-align:center;
-
-  pointer-events:none;
-}
-
-.stage-kicker{
-  color:#a77936;
-
-  font-size:10px;
-
-  letter-spacing:.27em;
-}
-
-.stage-copy h1{
-  margin-top:8px;
-
-  font-family:
-    Georgia,
-    "Noto Serif TC",
-    serif;
-
-  font-size:31px;
-  font-weight:500;
-}
-
-.stage-copy p{
-  margin-top:6px;
-
-  color:#8d7764;
-
-  font-size:11px;
-}
-
-/* TABLE */
-
-.table{
-  position:absolute;
-
-  left:50%;
-  bottom:-165px;
-
-  width:800px;
-  height:300px;
-
-  transform:translateX(-50%);
-
-  border-radius:50%;
-
-  background:
-    radial-gradient(
-      ellipse at center,
-      #b98a5f 0%,
-      #9a6e49 55%,
-      #765136 100%
-    );
-
-  box-shadow:
-    0 -20px 60px rgba(112,77,46,.16),
-    inset 0 10px 25px rgba(255,255,255,.12);
-
-  opacity:.7;
-
-  pointer-events:none;
-}
-
-/* RESTAURANT ORBITS */
-
-.restaurant-cloud{
-  position:absolute;
-
-  inset:0;
-
-  z-index:6;
-
-  pointer-events:none;
-}
-
-.restaurant-pill{
-  position:absolute;
-
-  padding:8px 12px;
-
-  border:1px solid rgba(167,117,46,.17);
-
-  border-radius:100px;
-
-  color:#775e46;
-
-  background:rgba(255,253,247,.72);
-
-  backdrop-filter:blur(8px);
-
-  box-shadow:
-    0 8px 22px rgba(101,72,42,.08);
-
-  font-size:10px;
-
-  opacity:.68;
-
-  transition:.4s;
-}
-
-.restaurant-pill.highlight{
-  color:white;
-
-  border-color:#c48b32;
-
-  background:#c48b32;
-
-  opacity:1;
-
-  transform:scale(1.1);
-
-  box-shadow:
-    0 9px 25px rgba(183,123,40,.3);
-}
-
-/* MAGIC MESSAGE */
-
-.magic-message{
-  position:absolute;
-
-  left:50%;
-  bottom:42px;
-
-  z-index:8;
-
-  transform:translateX(-50%);
-
-  padding:10px 18px;
-
-  border:1px solid rgba(164,113,43,.16);
-
-  border-radius:100px;
-
-  color:#826747;
-
-  background:rgba(255,253,247,.75);
-
-  backdrop-filter:blur(12px);
-
-  font-family:Georgia,"Noto Serif TC",serif;
-
-  font-size:12px;
-
-  box-shadow:
-    0 10px 30px rgba(101,72,42,.08);
-
-  transition:.3s;
-}
-
-/* =========================================================
-   07. RESULT MODAL
-========================================================= */
-
-.modal-overlay{
-  position:fixed;
-
-  inset:0;
-
-  z-index:100;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  padding:20px;
-
-  background:rgba(70,51,36,.28);
-
-  backdrop-filter:blur(8px);
-
-  opacity:0;
-  pointer-events:none;
-
-  transition:.3s;
-}
-
-.modal-overlay.show{
-  opacity:1;
-  pointer-events:auto;
-}
-
+.result.show{display:flex}
 .result-card{
-  width:min(440px,100%);
-
-  padding:34px;
-
-  border:1px solid rgba(172,119,42,.2);
-
-  border-radius:28px;
-
+  width:min(500px,90%);padding:38px;text-align:center;
+  border:1px solid rgba(218,180,101,.55);
+  border-radius:8px;
   background:
-    linear-gradient(
-      145deg,
-      #fffdf8,
-      #f8eddb
-    );
-
-  box-shadow:
-    0 35px 100px rgba(69,48,31,.25);
-
-  text-align:center;
-
-  transform:translateY(20px) scale(.97);
-
-  transition:.35s;
+   radial-gradient(circle at 50% 0,rgba(150,105,41,.18),transparent 50%),
+   #100d09;
+  box-shadow:0 0 90px rgba(180,129,50,.18);
 }
-
-.modal-overlay.show .result-card{
-  transform:translateY(0) scale(1);
+.result-label{font-size:10px;letter-spacing:5px;color:#9d8150}
+.result-card h2{
+  font-family:Georgia,"Microsoft JhengHei",serif;
+  color:#f3d992;font-size:32px;font-weight:normal;margin:16px 0 8px;
 }
-
-.result-symbol{
-  width:58px;
-  height:58px;
-
-  margin:auto;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  border-radius:50%;
-
-  color:#8a5a16;
-
-  background:#f1d49b;
-
-  font-family:Georgia,serif;
-
-  font-size:25px;
+.result-meta{color:#b9a984;font-size:13px}
+.tags{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:20px}
+.tag{
+  padding:5px 10px;border:1px solid rgba(190,156,90,.25);
+  border-radius:20px;color:#c9b68e;font-size:11px;
 }
-
-.result-kicker{
-  margin-top:19px;
-
-  color:#aa7935;
-
-  font-size:10px;
-
-  letter-spacing:.25em;
+.actions{display:flex;gap:8px;justify-content:center;margin-top:24px}
+.actions button{
+  border:1px solid #6e5830;background:#19130c;color:#d9c28e;
+  padding:10px 17px;border-radius:4px;cursor:pointer;
 }
+.actions .primary{background:#725326;color:#fff0c7;border-color:#a78042}
 
-.result-name{
-  margin-top:8px;
-
-  font-family:
-    Georgia,
-    "Noto Serif TC",
-    serif;
-
-  font-size:31px;
+@media(max-width:760px){
+  .panel{left:12px;right:12px;top:auto;bottom:12px;transform:none;width:auto;padding:13px}
+  .panel-title,.food-group{display:none}
+  .group{display:inline-block;width:48%;margin-bottom:10px}
+  header{top:15px}
+  .dialogue{bottom:190px}
 }
-
-.result-distance{
-  margin-top:7px;
-
-  color:#806b59;
-
-  font-size:12px;
-}
-
-.result-tags{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-
-  gap:7px;
-
-  margin-top:17px;
-}
-
-.result-tags span{
-  padding:6px 10px;
-
-  border-radius:100px;
-
-  color:#765624;
-
-  background:#f0dfbd;
-
-  font-size:10px;
-}
-
-.modal-actions{
-  display:grid;
-
-  grid-template-columns:1fr 1fr;
-
-  gap:9px;
-
-  margin-top:26px;
-}
-
-.modal-actions button,
-.modal-actions a{
-  padding:12px;
-
-  border-radius:13px;
-
-  text-decoration:none;
-
-  font-size:11px;
-}
-
-.map-btn{
-  grid-column:1 / -1;
-
-  color:white;
-
-  border:0;
-
-  background:var(--brown);
-}
-
-.again-btn{
-  color:#604b39;
-
-  border:1px solid var(--line);
-
-  background:white;
-}
-
-.filter-btn{
-  color:#604b39;
-
-  border:1px solid var(--line);
-
-  background:white;
-}
-
-/* =========================================================
-   08. RESPONSIVE
-========================================================= */
-
-@media(max-width:800px){
-
-  header{
-    height:72px;
-
-    padding:0 17px;
-  }
-
-  .brand-sub,
-  .header-right{
-    display:none;
-  }
-
-  .app{
-    top:72px;
-
-    display:block;
-  }
-
-  .sidebar{
-    position:absolute;
-
-    left:12px;
-    right:12px;
-    bottom:12px;
-
-    z-index:20;
-
-    max-height:44vh;
-
-    padding:17px;
-
-    border:1px solid var(--line);
-
-    border-radius:22px;
-
-    box-shadow:var(--shadow);
-  }
-
-  .sidebar h2{
-    font-size:21px;
-  }
-
-  .sidebar-intro{
-    display:none;
-  }
-
-  .filter-section{
-    margin-top:15px;
-  }
-
-  .stage{
-    width:100%;
-    height:100%;
-  }
-
-  .stage-copy{
-    top:20px;
-
-    width:90%;
-  }
-
-  .stage-copy h1{
-    font-size:23px;
-  }
-
-  .stage-copy p{
-    display:none;
-  }
-
-  .magic-message{
-    bottom:48%;
-  }
-
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     BACKGROUND
-========================================================= -->
-
-<div class="magic-bg">
-
-  <div class="sun-glow"></div>
-
-  <div class="window"></div>
-
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
-  <div class="bg-orb orb3"></div>
-
-</div>
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
+<div id="scene"></div>
+<div class="vignette"></div>
 
 <header>
-
-  <div class="brand">
-
-    <div class="logo">
-      AI3
-    </div>
-
-    <div>
-
-      <div class="brand-title">
-        魔法午餐分類帽
-      </div>
-
-      <div class="brand-sub">
-        AI3 · NANGANG LUNCH ORACLE
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="header-right">
-
-    <span class="status-dot"></span>
-
-    <span>
-      南港軟體園區 · 今日魔法正常
-    </span>
-
-  </div>
-
+  <small>AI3 · NANGANG</small>
+  <h1>THE ENCHANTED LUNCH HAT</h1>
 </header>
 
-<!-- =========================================================
-     APP
-========================================================= -->
+<aside class="panel">
+  <div class="panel-title">午餐魔法條件</div>
 
-<div class="app">
-
-<!-- =========================================================
-     SIDEBAR
-========================================================= -->
-
-<aside class="sidebar">
-
-  <div class="sidebar-kicker">
-    Before the spell
+  <div class="group">
+    <div class="group-title">願意踏出多遠？</div>
+    <select id="distance">
+      <option value="500">500 公尺內</option>
+      <option value="1000">1 公里內</option>
+      <option value="2000" selected>2 公里內</option>
+    </select>
   </div>
 
-  <h2>
-    今日想食啥？
-  </h2>
-
-  <p class="sidebar-intro">
-    先講你的條件，剩下的交予魔法分類帽。
-    猶豫太久，午休就欲無矣。
-  </p>
-
-  <!-- DISTANCE -->
-
-  <div class="filter-section">
-
-    <div class="filter-label">
-
-      <span>
-        可以行偌遠？
-      </span>
-
-      <span
-        id="distanceDisplay"
-        class="filter-number">
-        2 KM
-      </span>
-
-    </div>
-
-    <div class="segmented">
-
-      <button
-        data-distance="500">
-        500m
-      </button>
-
-      <button
-        data-distance="1000">
-        1km
-      </button>
-
-      <button
-        data-distance="2000"
-        class="active">
-        2km
-      </button>
-
-    </div>
-
+  <div class="group">
+    <div class="group-title">環境咒語</div>
+    <label class="check">
+      <input id="ac" type="checkbox" checked>
+      必須有冷氣
+    </label>
   </div>
 
-  <!-- AC -->
-
-  <div class="filter-section">
-
-    <div class="filter-label">
-      <span>
-        環境條件
-      </span>
-    </div>
-
-    <div class="ac-row">
-
-      <div>
-
-        <div class="ac-title">
-          必須有冷氣
-        </div>
-
-        <div class="ac-sub">
-          台北的夏天，這條很重要。
-        </div>
-
-      </div>
-
-      <button
-        id="acSwitch"
-        class="switch on">
-      </button>
-
-    </div>
-
+  <div class="group food-group">
+    <div class="group-title">今日胃口</div>
+    <div id="foods"></div>
   </div>
 
-  <!-- FOOD -->
-
-  <div class="filter-section">
-
-    <div class="filter-label">
-
-      <span>
-        今日想食
-      </span>
-
-      <span style="
-        font-size:9px;
-        color:#a58b72;
-        font-weight:400;
-      ">
-        可複選
-      </span>
-
-    </div>
-
-    <div
-      id="foodChips"
-      class="chips">
-
-      <button
-        class="chip active"
-        data-food="飯">
-        🍚 飯
-      </button>
-
-      <button
-        class="chip active"
-        data-food="麵">
-        🍜 麵
-      </button>
-
-      <button
-        class="chip active"
-        data-food="鍋貼/水餃">
-        🥟 鍋貼 / 水餃
-      </button>
-
-      <button
-        class="chip active"
-        data-food="漢堡/美式">
-        🍔 漢堡 / 美式
-      </button>
-
-      <button
-        class="chip active"
-        data-food="小吃">
-        🍢 小吃
-      </button>
-
-      <button
-        class="chip active"
-        data-food="健康餐">
-        🥗 健康餐
-      </button>
-
-    </div>
-
+  <div class="count">
+    魔法帽感應到 <b id="count">0</b> 間餐廳
   </div>
 
-  <!-- MATCH -->
-
-  <div class="match-box">
-
-    <div class="match-top">
-
-      <span class="match-title">
-        魔法範圍內
-      </span>
-
-      <span
-        id="matchCount"
-        class="match-count">
-        0
-      </span>
-
-    </div>
-
-    <div
-      id="matchText"
-      class="match-text">
-      間餐廳等待分類
-    </div>
-
-  </div>
-
-  <button
-    id="sortButton"
-    class="sort-button">
-
-    ✦ 讓分類帽決定午餐
-
+  <button id="choose" class="magic-button">
+    讓魔法帽決定
   </button>
-
 </aside>
 
-<!-- =========================================================
-     3D STAGE
-========================================================= -->
-
-<main class="stage">
-
-  <div class="stage-copy">
-
-    <div class="stage-kicker">
-      THE LUNCH ORACLE
-    </div>
-
-    <h1>
-      午餐，不需要再開會。
-    </h1>
-
-    <p>
-      拖曳看看分類帽，或直接讓它替你決定。
-    </p>
-
-  </div>
-
-  <div id="three-container"></div>
-
-  <div class="table"></div>
-
-  <div
-    id="restaurantCloud"
-    class="restaurant-cloud">
-  </div>
-
-  <div
-    id="magicMessage"
-    class="magic-message">
-
-    分類帽正在等你下令……
-
-  </div>
-
-</main>
-
+<div class="dialogue">
+  <div id="speech">「Hmm... 今天的你，想吃些什麼呢？」</div>
+  <div class="hint">DRAG TO LOOK AROUND · SCROLL TO MOVE</div>
 </div>
 
-<!-- =========================================================
-     RESULT MODAL
-========================================================= -->
-
-<div
-  id="resultModal"
-  class="modal-overlay">
-
+<div id="result" class="result">
   <div class="result-card">
+    <div class="result-label">THE HAT HAS DECIDED</div>
+    <h2 id="resultName"></h2>
+    <div id="resultMeta" class="result-meta"></div>
+    <div id="tags" class="tags"></div>
 
-    <div class="result-symbol">
-      ✦
+    <div class="actions">
+      <button id="again">不服，再問一次</button>
+      <button id="back" class="primary">接受命運</button>
     </div>
-
-    <div class="result-kicker">
-      THE HAT HAS SPOKEN
-    </div>
-
-    <div
-      id="resultName"
-      class="result-name">
-    </div>
-
-    <div
-      id="resultDistance"
-      class="result-distance">
-    </div>
-
-    <div
-      id="resultTags"
-      class="result-tags">
-    </div>
-
-    <div class="modal-actions">
-
-      <a
-        id="mapButton"
-        class="map-btn"
-        target="_blank"
-        rel="noopener">
-
-        開啟 Google 地圖 →
-
-      </a>
-
-      <button
-        id="againButton"
-        class="again-btn">
-
-        ↻ 不服，再抽
-
-      </button>
-
-      <button
-        id="closeButton"
-        class="filter-btn">
-
-        重新篩選
-
-      </button>
-
-    </div>
-
   </div>
-
 </div>
 
 <script>
-
-/* =========================================================
+/* ======================================================
    RESTAURANT DATA
-   可以直接在這裡繼續加入 AI3 附近餐廳
-========================================================= */
+   之後主要修改這裡即可
+====================================================== */
 
-const restaurants = [
-
-  {
-    id:"r01",
-    name:"樂法 Le Phu",
-    distanceMeters:300,
-    hasAC:true,
-    categories:["漢堡/美式","小吃"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=樂法+南港",
-    priceRange:"$"
-  },
-
-  {
-    id:"r02",
-    name:"朱記餡餅粥店",
-    distanceMeters:1200,
-    hasAC:true,
-    categories:["飯","麵","鍋貼/水餃"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=朱記餡餅粥店+南港",
-    priceRange:"$$"
-  },
-
-  {
-    id:"r03",
-    name:"八方雲集",
-    distanceMeters:450,
-    hasAC:true,
-    categories:["鍋貼/水餃","麵"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=八方雲集+南港",
-    priceRange:"$"
-  },
-
-  {
-    id:"r04",
-    name:"梁社漢排骨",
-    distanceMeters:600,
-    hasAC:true,
-    categories:["飯"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=梁社漢排骨+南港",
-    priceRange:"$"
-  },
-
-  {
-    id:"r05",
-    name:"鬍鬚張魯肉飯",
-    distanceMeters:950,
-    hasAC:true,
-    categories:["飯","小吃"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=鬍鬚張+南港",
-    priceRange:"$"
-  },
-
-  {
-    id:"r06",
-    name:"摩斯漢堡",
-    distanceMeters:850,
-    hasAC:true,
-    categories:["漢堡/美式"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=摩斯漢堡+南港",
-    priceRange:"$$"
-  },
-
-  {
-    id:"r07",
-    name:"Subway",
-    distanceMeters:700,
-    hasAC:true,
-    categories:["漢堡/美式","健康餐"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=Subway+南港",
-    priceRange:"$$"
-  },
-
-  {
-    id:"r08",
-    name:"健康餐盒",
-    distanceMeters:520,
-    hasAC:true,
-    categories:["飯","健康餐"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=健康餐盒+南港軟體園區",
-    priceRange:"$$"
-  },
-
-  {
-    id:"r09",
-    name:"三商巧福",
-    distanceMeters:1100,
-    hasAC:true,
-    categories:["麵","飯"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=三商巧福+南港",
-    priceRange:"$"
-  },
-
-  {
-    id:"r10",
-    name:"南港老張燒餅",
-    distanceMeters:1700,
-    hasAC:false,
-    categories:["小吃"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=南港+小吃",
-    priceRange:"$"
-  },
-
-  {
-    id:"r11",
-    name:"丸亀製麵",
-    distanceMeters:1250,
-    hasAC:true,
-    categories:["麵"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=丸亀製麵+南港",
-    priceRange:"$$"
-  },
-
-  {
-    id:"r12",
-    name:"吉野家",
-    distanceMeters:1350,
-    hasAC:true,
-    categories:["飯"],
-    googleMapUrl:"https://www.google.com/maps/search/?api=1&query=吉野家+南港",
-    priceRange:"$"
-  }
-
+const restaurants=[
+ {name:"樂法 Le Phu",distance:300,ac:true,types:["漢堡/美式","其他/小吃"]},
+ {name:"園區牛肉麵",distance:420,ac:true,types:["麵"]},
+ {name:"南港漢堡研究所",distance:480,ac:true,types:["漢堡/美式"]},
+ {name:"咖哩研究社",distance:560,ac:true,types:["飯"]},
+ {name:"南港燒餅店",distance:650,ac:false,types:["其他/小吃"]},
+ {name:"健康廚房",distance:850,ac:true,types:["飯","健康餐/沙拉"]},
+ {name:"南港水餃館",distance:920,ac:true,types:["鍋貼/水餃","麵"]},
+ {name:"日式烏龍麵",distance:980,ac:true,types:["麵"]},
+ {name:"南港湯包小館",distance:1100,ac:true,types:["其他/小吃"]},
+ {name:"朱記餡餅粥店",distance:1200,ac:true,types:["麵","飯","鍋貼/水餃"]},
+ {name:"昆陽雞肉飯",distance:1550,ac:true,types:["飯","其他/小吃"]},
+ {name:"清爽沙拉研究所",distance:1800,ac:true,types:["健康餐/沙拉"]}
 ];
 
+const foodTypes=[
+ "麵","飯","鍋貼/水餃",
+ "漢堡/美式","健康餐/沙拉","其他/小吃"
+];
 
-/* =========================================================
-   FILTER STATE
-========================================================= */
+/* ======================================================
+   FILTER UI
+====================================================== */
 
-let maxDistance = 2000;
-let requireAC = true;
+const foods=document.getElementById("foods");
 
-let selectedFoods = new Set([
-  "飯",
-  "麵",
-  "鍋貼/水餃",
-  "漢堡/美式",
-  "小吃",
-  "健康餐"
-]);
+foodTypes.forEach(type=>{
+ const label=document.createElement("label");
+ label.className="check";
 
-let filteredRestaurants = [];
+ const input=document.createElement("input");
+ input.type="checkbox";
+ input.value=type;
+ input.checked=true;
 
-let isSorting = false;
+ label.appendChild(input);
+ label.append(type);
 
+ foods.appendChild(label);
+});
 
-/* =========================================================
-   FILTER LOGIC
-========================================================= */
+function filteredRestaurants(){
+
+ const distance=Number(document.getElementById("distance").value);
+ const needAC=document.getElementById("ac").checked;
+
+ const selected=[
+   ...foods.querySelectorAll("input:checked")
+ ].map(x=>x.value);
+
+ return restaurants.filter(r=>
+   r.distance<=distance &&
+   (!needAC || r.ac) &&
+   r.types.some(t=>selected.includes(t))
+ );
+}
 
 function updateFilter(){
 
-  filteredRestaurants = restaurants.filter(r => {
+ const list=filteredRestaurants();
 
-    const distanceOK =
-      r.distanceMeters <= maxDistance;
+ document.getElementById("count").textContent=list.length;
+ document.getElementById("choose").disabled=list.length===0;
 
-    const acOK =
-      !requireAC || r.hasAC;
-
-    const foodOK =
-      r.categories.some(
-        category => selectedFoods.has(category)
-      );
-
-    return distanceOK && acOK && foodOK;
-
-  });
-
-  document.getElementById("matchCount").textContent =
-    filteredRestaurants.length;
-
-  document.getElementById("matchText").textContent =
-    filteredRestaurants.length
-      ? "間餐廳正在等待魔法分類"
-      : "沒有符合條件的餐廳";
-
-  document.getElementById("sortButton").disabled =
-    filteredRestaurants.length === 0;
-
-  updateRestaurantCloud();
-
+ if(list.length===0){
+   setSpeech("「Hmm... 你的條件太嚴格了，我什麼都感應不到。」");
+ }else{
+   setSpeech("「很好……我感覺到 " + list.length + " 種可能。」");
+ }
 }
 
+document.querySelectorAll("input,select")
+ .forEach(el=>el.addEventListener("change",updateFilter));
 
-/* =========================================================
-   DISTANCE
-========================================================= */
-
-document
-.querySelectorAll("[data-distance]")
-.forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    document
-    .querySelectorAll("[data-distance]")
-    .forEach(b => b.classList.remove("active"));
-
-    button.classList.add("active");
-
-    maxDistance =
-      Number(button.dataset.distance);
-
-    document.getElementById(
-      "distanceDisplay"
-    ).textContent =
-      maxDistance === 500
-        ? "500 M"
-        : maxDistance === 1000
-        ? "1 KM"
-        : "2 KM";
-
-    updateFilter();
-
-  });
-
-});
-
-
-/* =========================================================
-   AC SWITCH
-========================================================= */
-
-const acSwitch =
-  document.getElementById("acSwitch");
-
-acSwitch.addEventListener("click", () => {
-
-  requireAC = !requireAC;
-
-  acSwitch.classList.toggle(
-    "on",
-    requireAC
-  );
-
-  updateFilter();
-
-});
-
-
-/* =========================================================
-   FOOD CHIPS
-========================================================= */
-
-document
-.querySelectorAll("[data-food]")
-.forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    const food =
-      button.dataset.food;
-
-    if(selectedFoods.has(food)){
-
-      selectedFoods.delete(food);
-
-      button.classList.remove("active");
-
-    }else{
-
-      selectedFoods.add(food);
-
-      button.classList.add("active");
-
-    }
-
-    updateFilter();
-
-  });
-
-});
-
-
-/* =========================================================
-   RESTAURANT CLOUD
-========================================================= */
-
-function updateRestaurantCloud(){
-
-  const cloud =
-    document.getElementById(
-      "restaurantCloud"
-    );
-
-  cloud.innerHTML = "";
-
-  const positions = [
-
-    [18,28],
-    [73,27],
-    [12,49],
-    [81,48],
-    [20,68],
-    [72,70],
-    [34,22],
-    [61,20],
-    [30,77],
-    [64,78]
-
-  ];
-
-  filteredRestaurants
-  .slice(0,10)
-  .forEach((restaurant,index) => {
-
-    const pill =
-      document.createElement("div");
-
-    pill.className =
-      "restaurant-pill";
-
-    pill.dataset.restaurant =
-      restaurant.id;
-
-    pill.textContent =
-      restaurant.name;
-
-    const pos =
-      positions[index % positions.length];
-
-    pill.style.left =
-      pos[0] + "%";
-
-    pill.style.top =
-      pos[1] + "%";
-
-    cloud.appendChild(pill);
-
-  });
-
-}
-
-
-/* =========================================================
+/* ======================================================
    THREE.JS
-========================================================= */
+====================================================== */
 
-const container =
-  document.getElementById(
-    "three-container"
-  );
+const container=document.getElementById("scene");
 
-const scene =
-  new THREE.Scene();
+const scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x070707,.055);
 
-const camera =
-  new THREE.PerspectiveCamera(
-    38,
-    container.clientWidth /
-    container.clientHeight,
-    .1,
-    100
-  );
-
-camera.position.set(
-  0,
-  .8,
-  8.3
+const camera=new THREE.PerspectiveCamera(
+ 45,
+ window.innerWidth/window.innerHeight,
+ .1,
+ 100
 );
 
+camera.position.set(0,1.7,8);
 
-/* RENDERER */
+const renderer=new THREE.WebGLRenderer({
+ antialias:true,
+ alpha:true
+});
 
-const renderer =
-  new THREE.WebGLRenderer({
-    antialias:true,
-    alpha:true
-  });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 
-renderer.setPixelRatio(
-  Math.min(
-    window.devicePixelRatio,
-    2
-  )
+container.appendChild(renderer.domElement);
+
+/* ======================================================
+   LIGHTING
+====================================================== */
+
+scene.add(new THREE.AmbientLight(0x6b5439,.45));
+
+const keyLight=new THREE.PointLight(
+ 0xffb24c,
+ 2.5,
+ 20
 );
 
-renderer.setSize(
-  container.clientWidth,
-  container.clientHeight
-);
-
-renderer.shadowMap.enabled = true;
-
-renderer.shadowMap.type =
-  THREE.PCFSoftShadowMap;
-
-renderer.outputEncoding =
-  THREE.sRGBEncoding;
-
-container.appendChild(
-  renderer.domElement
-);
-
-
-/* =========================================================
-   LIGHTS
-========================================================= */
-
-const hemi =
-  new THREE.HemisphereLight(
-    0xfff5dc,
-    0xb58c66,
-    2.0
-  );
-
-scene.add(hemi);
-
-
-const keyLight =
-  new THREE.DirectionalLight(
-    0xffe5b1,
-    2.6
-  );
-
-keyLight.position.set(
-  -4,
-  7,
-  5
-);
-
-keyLight.castShadow = true;
+keyLight.position.set(0,4,4);
+keyLight.castShadow=true;
 
 scene.add(keyLight);
 
-
-const fillLight =
-  new THREE.DirectionalLight(
-    0xfff8e7,
-    1.8
-  );
-
-fillLight.position.set(
-  5,
-  3,
-  4
+const rimLight=new THREE.PointLight(
+ 0x6551aa,
+ 1.2,
+ 15
 );
 
-scene.add(fillLight);
+rimLight.position.set(-4,3,-3);
 
+scene.add(rimLight);
 
-const warmLight =
-  new THREE.PointLight(
-    0xe8a84b,
-    1.2,
-    12
-  );
+/* ======================================================
+   STONE FLOOR
+====================================================== */
 
-warmLight.position.set(
-  0,
-  3,
-  3
+const floor=new THREE.Mesh(
+ new THREE.CircleGeometry(10,64),
+ new THREE.MeshStandardMaterial({
+   color:0x17130f,
+   roughness:.95,
+   metalness:.05
+ })
 );
 
-scene.add(warmLight);
+floor.rotation.x=-Math.PI/2;
+floor.position.y=-1.75;
+floor.receiveShadow=true;
 
+scene.add(floor);
 
-/* =========================================================
-   HAT GROUP
-========================================================= */
+/* Decorative rings */
 
-const hat =
-  new THREE.Group();
+for(let r=2;r<8;r+=1.5){
 
-hat.position.y = -.3;
+ const ring=new THREE.Mesh(
+   new THREE.RingGeometry(r,r+.015,90),
+   new THREE.MeshBasicMaterial({
+     color:0x5a4729,
+     transparent:true,
+     opacity:.32,
+     side:THREE.DoubleSide
+   })
+ );
 
+ ring.rotation.x=-Math.PI/2;
+ ring.position.y=-1.73;
+
+ scene.add(ring);
+}
+
+/* ======================================================
+   MAGIC HAT
+====================================================== */
+
+const hat=new THREE.Group();
 scene.add(hat);
 
+hat.position.y=-.35;
 
-/* MATERIALS */
+/* brim */
 
-const hatMaterial =
-  new THREE.MeshStandardMaterial({
+const brim=new THREE.Mesh(
+ new THREE.CylinderGeometry(2.05,2.3,.22,48),
+ new THREE.MeshStandardMaterial({
+   color:0x3a2414,
+   roughness:.93
+ })
+);
 
-    color:0x76533b,
-
-    roughness:.72,
-
-    metalness:.03
-
-  });
-
-
-const darkHatMaterial =
-  new THREE.MeshStandardMaterial({
-
-    color:0x503727,
-
-    roughness:.82
-
-  });
-
-
-const insideMaterial =
-  new THREE.MeshStandardMaterial({
-
-    color:0x2e2018,
-
-    roughness:.9
-
-  });
-
-
-/* =========================================================
-   BRIM
-========================================================= */
-
-const brimGeometry =
-  new THREE.CylinderGeometry(
-    2.05,
-    2.25,
-    .20,
-    48
-  );
-
-const brim =
-  new THREE.Mesh(
-    brimGeometry,
-    hatMaterial
-  );
-
-brim.scale.z = .72;
-
-brim.rotation.z = -.04;
-
-brim.castShadow = true;
-brim.receiveShadow = true;
+brim.scale.z=.65;
+brim.castShadow=true;
 
 hat.add(brim);
 
+/* crown */
 
-/* BRIM WRINKLES */
+const crownGeometry=new THREE.CylinderGeometry(
+ .38,
+ 1.35,
+ 2.8,
+ 32,
+ 8
+);
 
-for(let i=0;i<8;i++){
+const positions=crownGeometry.attributes.position;
 
-  const angle =
-    (i / 8) *
-    Math.PI *
-    2;
+for(let i=0;i<positions.count;i++){
 
-  const wrinkle =
-    new THREE.Mesh(
+ const x=positions.getX(i);
+ const y=positions.getY(i);
+ const z=positions.getZ(i);
 
-      new THREE.TorusGeometry(
-        .35,
-        .045,
-        8,
-        20,
-        Math.PI
-      ),
+ const deformation=
+   Math.sin(y*3+x*2)*.08 +
+   Math.cos(z*5)*.05;
 
-      darkHatMaterial
-
-    );
-
-  wrinkle.position.set(
-
-    Math.cos(angle) * 1.65,
-
-    .1,
-
-    Math.sin(angle) * 1.05
-
-  );
-
-  wrinkle.rotation.y =
-    -angle;
-
-  wrinkle.rotation.x =
-    Math.PI / 2;
-
-  wrinkle.scale.set(
-    1.5,
-    1,
-    .7
-  );
-
-  hat.add(wrinkle);
-
+ positions.setX(i,x+deformation);
+ positions.setZ(i,z+deformation*.6);
 }
 
+crownGeometry.computeVertexNormals();
 
-/* =========================================================
-   CROWN
-========================================================= */
+const crown=new THREE.Mesh(
+ crownGeometry,
+ new THREE.MeshStandardMaterial({
+   color:0x422817,
+   roughness:1
+ })
+);
 
-const crownGeometry =
-  new THREE.CylinderGeometry(
-    .42,
-    1.48,
-    2.7,
-    32,
-    5
-  );
-
-const crown =
-  new THREE.Mesh(
-    crownGeometry,
-    hatMaterial
-  );
-
-crown.position.y = 1.38;
-
-crown.rotation.z = -.12;
-
-crown.scale.z = .83;
-
-crown.castShadow = true;
+crown.position.y=1.35;
+crown.rotation.z=-.15;
+crown.castShadow=true;
 
 hat.add(crown);
 
+/* bent top */
 
-/* =========================================================
-   CROOKED TIP
-========================================================= */
-
-const tip1 =
-  new THREE.Mesh(
-
-    new THREE.ConeGeometry(
-      .52,
-      1.35,
-      28
-    ),
-
-    hatMaterial
-
-  );
-
-tip1.position.set(
-  -.18,
-  3.1,
-  0
+const tip=new THREE.Mesh(
+ new THREE.ConeGeometry(.65,1.45,28),
+ new THREE.MeshStandardMaterial({
+   color:0x392214,
+   roughness:1
+ })
 );
 
-tip1.rotation.z =
-  -.32;
+tip.position.set(-.35,3.0,0);
+tip.rotation.z=.55;
 
-tip1.castShadow = true;
+hat.add(tip);
 
-hat.add(tip1);
+/* face folds */
 
+const eyeMaterial=new THREE.MeshBasicMaterial({
+ color:0x080604
+});
 
-const tip2 =
-  new THREE.Mesh(
+function eye(x){
 
-    new THREE.ConeGeometry(
-      .31,
-      .9,
-      24
-    ),
+ const e=new THREE.Mesh(
+   new THREE.SphereGeometry(.14,16,8),
+   eyeMaterial
+ );
 
-    darkHatMaterial
+ e.scale.set(1.4,.35,.3);
+ e.position.set(x,1.45,1.15);
 
-  );
-
-tip2.position.set(
-  -.55,
-  3.82,
-  .02
-);
-
-tip2.rotation.z =
-  -.82;
-
-tip2.castShadow = true;
-
-hat.add(tip2);
-
-
-/* =========================================================
-   EYES
-========================================================= */
-
-function makeEye(x){
-
-  const eye =
-    new THREE.Mesh(
-
-      new THREE.SphereGeometry(
-        .25,
-        24,
-        12,
-        0,
-        Math.PI * 2,
-        0,
-        Math.PI / 2
-      ),
-
-      insideMaterial
-
-    );
-
-  eye.scale.set(
-    1.25,
-    .26,
-    .35
-  );
-
-  eye.position.set(
-    x,
-    1.72,
-    1.06
-  );
-
-  eye.rotation.x =
-    -.1;
-
-  return eye;
-
+ return e;
 }
 
-const leftEye =
-  makeEye(-.52);
+const leftEye=eye(-.42);
+const rightEye=eye(.42);
 
-const rightEye =
-  makeEye(.43);
+hat.add(leftEye,rightEye);
 
-hat.add(leftEye);
-hat.add(rightEye);
+/* mouth */
 
-
-/* EYEBROWS / FOLDS */
-
-function createFold(
-  x,
-  y,
-  rotation
-){
-
-  const fold =
-    new THREE.Mesh(
-
-      new THREE.TorusGeometry(
-        .48,
-        .07,
-        10,
-        24,
-        Math.PI
-      ),
-
-      darkHatMaterial
-
-    );
-
-  fold.position.set(
-    x,
-    y,
-    1
-  );
-
-  fold.rotation.z =
-    rotation;
-
-  return fold;
-
-}
-
-const brow1 =
-  createFold(
-    -.55,
-    2.03,
-    -.28
-  );
-
-const brow2 =
-  createFold(
-    .45,
-    2.03,
-    .28
-  );
-
-hat.add(brow1);
-hat.add(brow2);
-
-
-/* =========================================================
-   MOUTH
-========================================================= */
-
-const mouth =
-  new THREE.Mesh(
-
-    new THREE.TorusGeometry(
-      .65,
-      .105,
-      14,
-      32,
-      Math.PI
-    ),
-
-    insideMaterial
-
-  );
-
-mouth.position.set(
-  0,
-  .85,
-  1.14
+const mouth=new THREE.Mesh(
+ new THREE.TorusGeometry(.42,.055,8,30,Math.PI),
+ new THREE.MeshBasicMaterial({
+   color:0x090604
+ })
 );
 
-mouth.rotation.z =
-  Math.PI;
-
-mouth.scale.set(
-  1,
-  .75,
-  .4
-);
+mouth.position.set(0,.85,1.19);
+mouth.rotation.z=Math.PI;
 
 hat.add(mouth);
 
+/* ======================================================
+   FLOATING CANDLES
+====================================================== */
 
-/* MOUTH LOWER FOLD */
+const candles=[];
 
-const mouthFold =
-  new THREE.Mesh(
+for(let i=0;i<22;i++){
 
-    new THREE.TorusGeometry(
-      .72,
-      .055,
-      10,
-      30,
-      Math.PI
-    ),
+ const candle=new THREE.Group();
 
-    darkHatMaterial
+ const body=new THREE.Mesh(
+   new THREE.CylinderGeometry(.035,.04,.45,10),
+   new THREE.MeshStandardMaterial({
+     color:0xe8d9b1
+   })
+ );
 
-  );
+ const flame=new THREE.Mesh(
+   new THREE.SphereGeometry(.045,10,10),
+   new THREE.MeshBasicMaterial({
+     color:0xffa62b
+   })
+ );
 
-mouthFold.position.set(
-  0,
-  .57,
-  1.02
-);
+ flame.scale.y=1.7;
+ flame.position.y=.27;
 
-mouthFold.rotation.z = 0;
+ candle.add(body,flame);
 
-hat.add(mouthFold);
+ const angle=Math.random()*Math.PI*2;
+ const radius=4+Math.random()*5;
 
+ candle.position.set(
+   Math.cos(angle)*radius,
+   .5+Math.random()*5,
+   Math.sin(angle)*radius
+ );
 
-/* =========================================================
-   PATCH
-========================================================= */
+ candle.userData.baseY=candle.position.y;
+ candle.userData.speed=.3+Math.random()*.6;
+ candle.userData.offset=Math.random()*10;
 
-const patch =
-  new THREE.Mesh(
+ scene.add(candle);
+ candles.push(candle);
+}
 
-    new THREE.PlaneGeometry(
-      .52,
-      .65
-    ),
+/* ======================================================
+   MAGIC PARTICLES
+====================================================== */
 
-    new THREE.MeshStandardMaterial({
+const particleCount=500;
 
-      color:0x997152,
+const particleGeometry=new THREE.BufferGeometry();
+const particlePositions=new Float32Array(particleCount*3);
 
-      roughness:.95,
+for(let i=0;i<particleCount;i++){
 
-      side:THREE.DoubleSide
-
-    })
-
-  );
-
-patch.position.set(
-  .88,
-  2.35,
-  .88
-);
-
-patch.rotation.y =
-  -.28;
-
-patch.rotation.z =
-  .18;
-
-hat.add(patch);
-
-
-/* =========================================================
-   MAGIC RING
-========================================================= */
-
-const ringMaterial =
-  new THREE.MeshBasicMaterial({
-
-    color:0xd7a347,
-
-    transparent:true,
-
-    opacity:.28
-
-  });
-
-const magicRing =
-  new THREE.Mesh(
-
-    new THREE.TorusGeometry(
-      2.55,
-      .018,
-      8,
-      100
-    ),
-
-    ringMaterial
-
-  );
-
-magicRing.rotation.x =
-  Math.PI / 2;
-
-magicRing.position.y =
-  -.15;
-
-scene.add(magicRing);
-
-
-/* SECOND RING */
-
-const magicRing2 =
-  new THREE.Mesh(
-
-    new THREE.TorusGeometry(
-      2.9,
-      .009,
-      8,
-      100
-    ),
-
-    ringMaterial
-
-  );
-
-magicRing2.rotation.x =
-  Math.PI / 2;
-
-magicRing2.position.y =
-  -.1;
-
-scene.add(magicRing2);
-
-
-/* =========================================================
-   PARTICLES
-========================================================= */
-
-const particleCount = 90;
-
-const particleGeometry =
-  new THREE.BufferGeometry();
-
-const particlePositions =
-  new Float32Array(
-    particleCount * 3
-  );
-
-for(
-  let i=0;
-  i<particleCount;
-  i++
-){
-
-  const radius =
-    2.3 +
-    Math.random() * 2;
-
-  const angle =
-    Math.random() *
-    Math.PI *
-    2;
-
-  particlePositions[
-    i * 3
-  ] =
-    Math.cos(angle) *
-    radius;
-
-  particlePositions[
-    i * 3 + 1
-  ] =
-    Math.random() *
-    5 -
-    .5;
-
-  particlePositions[
-    i * 3 + 2
-  ] =
-    Math.sin(angle) *
-    radius;
-
+ particlePositions[i*3]=(Math.random()-.5)*16;
+ particlePositions[i*3+1]=Math.random()*8-2;
+ particlePositions[i*3+2]=(Math.random()-.5)*16;
 }
 
 particleGeometry.setAttribute(
-
-  "position",
-
-  new THREE.BufferAttribute(
-    particlePositions,
-    3
-  )
-
+ "position",
+ new THREE.BufferAttribute(particlePositions,3)
 );
 
-const particleMaterial =
-  new THREE.PointsMaterial({
+const particleMaterial=new THREE.PointsMaterial({
+ color:0xd9ae62,
+ size:.025,
+ transparent:true,
+ opacity:.55
+});
 
-    color:0xc99238,
-
-    size:.035,
-
-    transparent:true,
-
-    opacity:.5
-
-  });
-
-const particles =
-  new THREE.Points(
-
-    particleGeometry,
-
-    particleMaterial
-
-  );
+const particles=new THREE.Points(
+ particleGeometry,
+ particleMaterial
+);
 
 scene.add(particles);
 
+/* ======================================================
+   FLOATING RESTAURANT TEXT
+====================================================== */
 
-/* =========================================================
-   DRAG INTERACTION
-========================================================= */
+let restaurantSprites=[];
 
-let dragging = false;
+function textTexture(text){
 
-let previousX = 0;
+ const canvas=document.createElement("canvas");
+ canvas.width=800;
+ canvas.height=150;
 
-let targetRotation = 0;
+ const ctx=canvas.getContext("2d");
 
+ ctx.font="32px Georgia";
+ ctx.textAlign="center";
+ ctx.textBaseline="middle";
 
-renderer.domElement
-.addEventListener(
-  "pointerdown",
-  event => {
+ ctx.fillStyle="#ead59e";
+ ctx.shadowColor="#d9a84e";
+ ctx.shadowBlur=15;
 
-    dragging = true;
+ ctx.fillText(text,400,75);
 
-    previousX =
-      event.clientX;
+ const texture=new THREE.CanvasTexture(canvas);
 
-  }
-);
-
-
-window.addEventListener(
-  "pointerup",
-  () => {
-
-    dragging = false;
-
-  }
-);
-
-
-window.addEventListener(
-  "pointermove",
-  event => {
-
-    if(
-      !dragging ||
-      isSorting
-    ) return;
-
-    const delta =
-      event.clientX -
-      previousX;
-
-    targetRotation +=
-      delta * .006;
-
-    previousX =
-      event.clientX;
-
-  }
-);
-
-
-/* =========================================================
-   ANIMATION
-========================================================= */
-
-const clock =
-  new THREE.Clock();
-
-let sortStart = 0;
-
-let sortDuration = 3;
-
-let selectedRestaurant = null;
-
-let sortStartRotation = 0;
-
-let sortEndRotation = 0;
-
-
-function easeOutCubic(t){
-
-  return 1 -
-    Math.pow(
-      1 - t,
-      3
-    );
-
+ return texture;
 }
 
+function createRestaurantSpirits(){
 
-function animate(){
+ restaurantSprites.forEach(s=>scene.remove(s));
+ restaurantSprites=[];
 
-  requestAnimationFrame(
-    animate
-  );
+ const list=filteredRestaurants();
 
-  const time =
-    clock.getElapsedTime();
+ list.forEach((r,i)=>{
 
-  /* normal floating */
+   const material=new THREE.SpriteMaterial({
+     map:textTexture(r.name),
+     transparent:true,
+     opacity:.42
+   });
 
-  if(!isSorting){
+   const sprite=new THREE.Sprite(material);
 
-    hat.rotation.y +=
-      (
-        targetRotation -
-        hat.rotation.y
-      ) * .06;
+   const angle=i/list.length*Math.PI*2;
 
-    hat.position.y =
-      -.3 +
-      Math.sin(time * 1.5) *
-      .045;
+   sprite.position.set(
+     Math.cos(angle)*4,
+     .4+Math.sin(i*1.4)*1.2,
+     Math.sin(angle)*4
+   );
 
-    crown.rotation.z =
-      -.12 +
-      Math.sin(time * 1.2) *
-      .015;
+   sprite.scale.set(2.5,.47,1);
 
-    mouth.scale.y =
-      .75 +
-      Math.sin(time * 1.6) *
-      .035;
+   sprite.userData.angle=angle;
 
-  }
-
-  /* sorting */
-
-  if(isSorting){
-
-    const elapsed =
-      performance.now() /
-      1000 -
-      sortStart;
-
-    const progress =
-      Math.min(
-        elapsed /
-        sortDuration,
-        1
-      );
-
-    const eased =
-      easeOutCubic(progress);
-
-    hat.rotation.y =
-      sortStartRotation +
-      (
-        sortEndRotation -
-        sortStartRotation
-      ) *
-      eased;
-
-    hat.rotation.z =
-      Math.sin(
-        progress *
-        Math.PI *
-        10
-      ) *
-      .13 *
-      (1-progress);
-
-    hat.position.y =
-      -.3 +
-      Math.sin(
-        progress *
-        Math.PI *
-        8
-      ) *
-      .16 *
-      (1-progress);
-
-    mouth.scale.y =
-      .7 +
-      Math.sin(
-        progress *
-        Math.PI *
-        12
-      ) *
-      .22;
-
-    particleMaterial.opacity =
-      .45 +
-      Math.sin(
-        time * 10
-      ) *
-      .25;
-
-    if(progress >= 1){
-
-      finishSorting();
-
-    }
-
-  }
-
-  magicRing.rotation.z +=
-    .0018;
-
-  magicRing2.rotation.z -=
-    .001;
-
-  particles.rotation.y +=
-    .0007;
-
-  renderer.render(
-    scene,
-    camera
-  );
-
+   scene.add(sprite);
+   restaurantSprites.push(sprite);
+ });
 }
 
-animate();
+/* ======================================================
+   SORTING SEQUENCE
+====================================================== */
 
+let sorting=false;
+let sortingStart=0;
+let chosenRestaurant=null;
 
-/* =========================================================
-   SORTING
-========================================================= */
-
-const messages = [
-
-  "嗯……這間似乎不錯……",
-
-  "等一下，我聽到你的胃在講話……",
-
-  "飯？麵？還是命運？",
-
-  "魔法正在排除太遠的午餐……",
-
-  "今天不准再說「隨便」……"
-
+const speeches=[
+ "「Hmm... 讓我看看……」",
+ "「你今天似乎不想走得太遠……」",
+ "「我聞到了午餐的氣息……」",
+ "「飯？麵？還是某種更危險的選擇……」",
+ "「有了。我知道你今天該去哪裡了。」"
 ];
 
+function setSpeech(text){
+ document.getElementById("speech").textContent=text;
+}
 
 function startSorting(){
 
-  if(
-    isSorting ||
-    !filteredRestaurants.length
-  ) return;
+ if(sorting)return;
 
-  isSorting = true;
+ const list=filteredRestaurants();
+ if(!list.length)return;
 
-  selectedRestaurant =
-    filteredRestaurants[
-      Math.floor(
-        Math.random() *
-        filteredRestaurants.length
-      )
-    ];
+ chosenRestaurant=
+   list[Math.floor(Math.random()*list.length)];
 
-  sortStart =
-    performance.now() /
-    1000;
+ sorting=true;
+ sortingStart=performance.now();
 
-  sortStartRotation =
-    hat.rotation.y;
+ document.getElementById("choose").disabled=true;
 
-  sortEndRotation =
-    sortStartRotation +
-    Math.PI *
-    (
-      6 +
-      Math.random() * 3
-    );
+ createRestaurantSpirits();
 
-  document.getElementById(
-    "sortButton"
-  ).disabled = true;
-
-  const message =
-    document.getElementById(
-      "magicMessage"
-    );
-
-  message.textContent =
-    "分類帽正在思考……";
-
-  let messageIndex = 0;
-
-  window.sortMessageTimer =
-    setInterval(() => {
-
-      message.textContent =
-        messages[
-          messageIndex %
-          messages.length
-        ];
-
-      messageIndex++;
-
-    },550);
-
+ setSpeech(speeches[0]);
 }
 
+document.getElementById("choose")
+ .addEventListener("click",startSorting);
 
 function finishSorting(){
 
-  isSorting = false;
+ sorting=false;
 
-  clearInterval(
-    window.sortMessageTimer
-  );
+ const r=chosenRestaurant;
 
-  hat.rotation.z = 0;
+ setSpeech("「那麼—— " + r.name + "！」");
 
-  targetRotation =
-    hat.rotation.y;
+ document.getElementById("resultName").textContent=r.name;
 
-  particleMaterial.opacity =
-    .5;
+ const minutes=Math.max(
+   3,
+   Math.round(r.distance/80)
+ );
 
-  document.getElementById(
-    "magicMessage"
-  ).textContent =
-    "決定了！就是這間 ✦";
+ document.getElementById("resultMeta").textContent=
+   r.distance+" 公尺 · 步行約 "+minutes+" 分鐘";
 
-  highlightRestaurant(
-    selectedRestaurant
-  );
+ const tags=document.getElementById("tags");
+ tags.innerHTML="";
 
-  setTimeout(() => {
+ [
+   r.ac?"有冷氣":"無冷氣",
+   ...r.types
+ ].forEach(text=>{
 
-    showResult(
-      selectedRestaurant
-    );
+   const tag=document.createElement("span");
+   tag.className="tag";
+   tag.textContent=text;
 
-    document.getElementById(
-      "sortButton"
-    ).disabled = false;
+   tags.appendChild(tag);
+ });
 
-  },550);
+ setTimeout(()=>{
+   document.getElementById("result").classList.add("show");
+ },650);
 
+ document.getElementById("choose").disabled=false;
 }
 
+/* ======================================================
+   RESULT ACTIONS
+====================================================== */
 
-document.getElementById(
-  "sortButton"
-).addEventListener(
-  "click",
-  startSorting
-);
+document.getElementById("again").onclick=()=>{
+ document.getElementById("result").classList.remove("show");
+ startSorting();
+};
 
+document.getElementById("back").onclick=()=>{
+ document.getElementById("result").classList.remove("show");
+};
 
-/* =========================================================
-   HIGHLIGHT
-========================================================= */
+/* ======================================================
+   CAMERA INTERACTION
+====================================================== */
 
-function highlightRestaurant(
-  restaurant
-){
+let dragging=false;
+let lastX=0;
+let cameraAngle=0;
 
-  document
-  .querySelectorAll(
-    ".restaurant-pill"
-  )
-  .forEach(pill => {
+renderer.domElement.addEventListener("pointerdown",e=>{
+ dragging=true;
+ lastX=e.clientX;
+});
 
-    pill.classList.toggle(
+window.addEventListener("pointerup",()=>{
+ dragging=false;
+});
 
-      "highlight",
+window.addEventListener("pointermove",e=>{
 
-      pill.dataset.restaurant ===
-      restaurant.id
+ if(!dragging)return;
 
-    );
+ cameraAngle+=(e.clientX-lastX)*.004;
+ lastX=e.clientX;
+});
 
-  });
+renderer.domElement.addEventListener("wheel",e=>{
 
+ camera.position.z+=e.deltaY*.003;
+ camera.position.z=Math.max(5,Math.min(11,camera.position.z));
+});
+
+/* ======================================================
+   ANIMATION LOOP
+====================================================== */
+
+function animate(time){
+
+ requestAnimationFrame(animate);
+
+ const t=time*.001;
+
+ /* camera orbit */
+
+ if(!dragging){
+   cameraAngle+=.00035;
+ }
+
+ camera.position.x=Math.sin(cameraAngle)*1.5;
+ camera.lookAt(0,.7,0);
+
+ /* hat idle */
+
+ if(!sorting){
+
+   hat.rotation.y=Math.sin(t*.45)*.08;
+   hat.position.y=-.35+Math.sin(t*.8)*.025;
+
+ }else{
+
+   const elapsed=time-sortingStart;
+
+   hat.rotation.y=
+     Math.sin(elapsed*.015)*.17;
+
+   hat.rotation.z=
+     Math.sin(elapsed*.021)*.035;
+
+   crown.scale.y=
+     1+Math.sin(elapsed*.018)*.025;
+
+   mouth.scale.y=
+     .7+Math.abs(Math.sin(elapsed*.012))*1.6;
+
+   particles.rotation.y+=.015;
+
+   restaurantSprites.forEach((sprite,i)=>{
+
+     sprite.userData.angle+=.025;
+
+     sprite.position.x=
+       Math.cos(sprite.userData.angle)*3.6;
+
+     sprite.position.z=
+       Math.sin(sprite.userData.angle)*3.6;
+
+     sprite.material.opacity=
+       .35+Math.sin(t*5+i)*.22;
+   });
+
+   if(elapsed>650 && elapsed<1300){
+     setSpeech(speeches[1]);
+   }
+
+   if(elapsed>1300 && elapsed<2000){
+     setSpeech(speeches[2]);
+   }
+
+   if(elapsed>2000 && elapsed<2750){
+     setSpeech(speeches[3]);
+   }
+
+   if(elapsed>2750 && elapsed<3400){
+     setSpeech(speeches[4]);
+   }
+
+   if(elapsed>3800){
+     finishSorting();
+   }
+ }
+
+ /* candles */
+
+ candles.forEach(c=>{
+
+   c.position.y=
+     c.userData.baseY+
+     Math.sin(t*c.userData.speed+c.userData.offset)*.15;
+
+   const flame=c.children[1];
+
+   flame.scale.y=
+     1.4+Math.sin(t*8+c.userData.offset)*.35;
+ });
+
+ particles.rotation.y+=.0004;
+
+ renderer.render(scene,camera);
 }
-
-
-/* =========================================================
-   RESULT
-========================================================= */
-
-function showResult(
-  restaurant
-){
-
-  document.getElementById(
-    "resultName"
-  ).textContent =
-    restaurant.name;
-
-
-  const minutes =
-    Math.max(
-      3,
-      Math.round(
-        restaurant.distanceMeters /
-        80
-      )
-    );
-
-
-  document.getElementById(
-    "resultDistance"
-  ).textContent =
-    `${restaurant.distanceMeters} 公尺 · 步行約 ${minutes} 分鐘`;
-
-
-  const tags =
-    document.getElementById(
-      "resultTags"
-    );
-
-
-  tags.innerHTML = "";
-
-
-  [
-    restaurant.hasAC
-      ? "❄ 有冷氣"
-      : "戶外 / 無冷氣",
-
-    ...restaurant.categories,
-
-    restaurant.priceRange
-
-  ].forEach(tag => {
-
-    const span =
-      document.createElement(
-        "span"
-      );
-
-    span.textContent = tag;
-
-    tags.appendChild(span);
-
-  });
-
-
-  document.getElementById(
-    "mapButton"
-  ).href =
-    restaurant.googleMapUrl;
-
-
-  document.getElementById(
-    "resultModal"
-  ).classList.add(
-    "show"
-  );
-
-}
-
-
-/* AGAIN */
-
-document.getElementById(
-  "againButton"
-).addEventListener(
-  "click",
-  () => {
-
-    document.getElementById(
-      "resultModal"
-    ).classList.remove(
-      "show"
-    );
-
-    setTimeout(
-      startSorting,
-      250
-    );
-
-  }
-);
-
-
-/* CLOSE */
-
-document.getElementById(
-  "closeButton"
-).addEventListener(
-  "click",
-  () => {
-
-    document.getElementById(
-      "resultModal"
-    ).classList.remove(
-      "show"
-    );
-
-    document.getElementById(
-      "magicMessage"
-    ).textContent =
-      "重新設定條件，再問分類帽一次。";
-
-  }
-);
-
-
-/* =========================================================
-   RESIZE
-========================================================= */
-
-window.addEventListener(
-  "resize",
-  () => {
-
-    camera.aspect =
-      container.clientWidth /
-      container.clientHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-      container.clientWidth,
-      container.clientHeight
-    );
-
-  }
-);
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
 
 updateFilter();
+createRestaurantSpirits();
+animate(0);
 
+/* ======================================================
+   RESIZE
+====================================================== */
+
+window.addEventListener("resize",()=>{
+
+ camera.aspect=
+   window.innerWidth/window.innerHeight;
+
+ camera.updateProjectionMatrix();
+
+ renderer.setSize(
+   window.innerWidth,
+   window.innerHeight
+ );
+});
 </script>
 
 </body>
